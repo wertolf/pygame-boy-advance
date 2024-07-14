@@ -8,6 +8,8 @@ from config import color_theme, resolution
 
 from lega.vector import Vector2D
 
+DEFAULT_FPS = 20
+
 class ScreenManager:
     def __init__(self, width, height):
         self._win_width = width
@@ -16,7 +18,7 @@ class ScreenManager:
         self.is_full_screen = False
         self.screen = pygame.display.set_mode(self.resolution)
         self.clock = pygame.time.Clock()
-        self.fps = 30
+        self.fps = DEFAULT_FPS
     
     def clear_screen_without_update(self) -> None:
         self.screen.fill(color_theme.background)

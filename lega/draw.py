@@ -1,9 +1,9 @@
-from lega.calc import calculate_centery
-from config import color_theme
-
-
 import pygame.draw
 import pygame.font
+
+from config import color_theme
+from lega.calc import calculate_centery
+from lega.screen import scrmgr
 
 
 def text_single_line(target_surface, text, selected=False, **kwargs):
@@ -11,6 +11,12 @@ def text_single_line(target_surface, text, selected=False, **kwargs):
     target_surface: 将文本绘制到哪里
     text: 想要绘制的**单行**文本
     selected: 是否启用被选中的效果
+
+    bold: 是否粗体
+    antialias:
+    font_size: 字体大小
+    color: 文字的颜色
+
     Specify position using kwargs.
     """
 
@@ -18,7 +24,8 @@ def text_single_line(target_surface, text, selected=False, **kwargs):
 
     bold = kwargs.pop("bold", True)
     antialias = kwargs.pop("antialias", True)
-    font_size = kwargs.pop("size", 20)
+    default_font_size = scrmgr.win_width // 16 // 4
+    font_size = kwargs.pop("size", default_font_size)
     color = kwargs.pop("color", color_theme.foreground)
 
     font_object = pygame.font.SysFont("Courier New", font_size, bold)
@@ -49,7 +56,8 @@ def text_multi_line(target_surface, text, reference_point, reference_type="cente
     reference_type: 参照点的类型，目前只支持居中对齐 (center)
     line_distance: 行间距
     """
-    line_distance = kwargs.get("line_distance", 40)
+    default_line_distance = scrmgr.win_width / 16 / 2
+    line_distance = kwargs.get("line_distance", default_line_distance)
     lines = text.split("\n")
 
     reference_x = reference_point[0]
