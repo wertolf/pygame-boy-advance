@@ -8,11 +8,12 @@ from card_prisoner.view.view import View
 from card_prisoner.view.view import ViewMode
 from card_prisoner.view.item_list import InventoryItemIndex, ShopItemIndex, ItemListMode
 from card_prisoner.view.sidebar import SideBarOptions
-from card_prisoner import actions, animations
+from card_prisoner import actions
 from card_prisoner.shared import messages
 from lega.screen import scrmgr
 
-from lega.misc import terminate
+from lega.misc import terminate, display_help
+from lega.an import global_fadeout
 
 import lega.draw
 
@@ -26,80 +27,6 @@ import math
 
 WINDOW_CAPTION = "Card Prisoner"
 
-def display_help_message(page_index):
-    scrmgr.clear_screen_without_update()
-
-    # 绘制帮助文本
-
-    lega.draw.text_multi_line(
-        scrmgr.screen,
-        messages.HELP[page_index],
-        reference_point=scrmgr.center,
-    )
-
-    # 绘制两个等边三角形
-
-    length = scrmgr.win_width / 16 / 4  # 等边三角形的边长
-    padding_x = scrmgr.win_width / 16  # 与窗口左右边缘的距离
-
-    pygame.draw.polygon(
-        scrmgr.screen,
-        color_theme.foreground,
-        [
-            (padding_x, scrmgr.center.y),
-            (padding_x + length * math.sqrt(3) / 2, scrmgr.center.y - length / 2),
-            (padding_x + length * math.sqrt(3) / 2, scrmgr.center.y + length / 2),
-        ]
-    )
-
-    pygame.draw.polygon(
-        scrmgr.screen,
-        color_theme.foreground,
-        [
-            (scrmgr.win_width - padding_x, scrmgr.center.y),
-            (scrmgr.win_width - padding_x - length * math.sqrt(3) / 2, scrmgr.center.y - length / 2),
-            (scrmgr.win_width - padding_x - length * math.sqrt(3) / 2, scrmgr.center.y + length / 2),
-        ]
-    )
-
-    # 绘制页面底部文本
-
-    padding_bottom = scrmgr.win_width / 16 / 4  # 与窗口底部的距离
-
-    lega.draw.text_single_line(
-        scrmgr.screen,
-        messages.HELP_BOTTOM,
-        centerx=scrmgr.center.x, centery=scrmgr.win_height - padding_bottom,
-    )
-
-    scrmgr.update_global()
-
-def help_subpage():
-
-    # init
-    help_page_index = 0
-    display_help_message(help_page_index)
-
-    while True:  # 在单独的函数中进行单独的事件处理
-        for e in pygame.event.get():
-            if e.type == QUIT:
-                terminate()
-            elif e.type == KEYUP:
-                key = getattr(e, "key")
-                match key:
-                    case key_bindings.cancel:
-                        return
-                    case key_bindings.left:
-                        help_page_index = (help_page_index - 1) % len(messages.HELP)
-                        display_help_message(help_page_index)
-                    case key_bindings.right:
-                        help_page_index = (help_page_index + 1) % len(messages.HELP)
-                        display_help_message(help_page_index)
-        
-        scrmgr.tick()
-
-
-
 def start_game():
 
     # initialization
@@ -108,6 +35,7 @@ def start_game():
     # but if called from another script they may be necessary
     pygame.init()
     scrmgr.clear_screen_without_update()
+    scrmgr.update_global()
 
     pygame.display.set_caption(WINDOW_CAPTION)
 
@@ -115,7 +43,6 @@ def start_game():
     view = View()
 
     view.draw_everything(player)
-    scrmgr.update_global()
 
     # main loop
 
@@ -141,7 +68,7 @@ def start_game():
             else:
                 # 若已经进入长按状态，则重复执行该键对应的行为
                 match pressed_key:
-                    case key_bindings.draw_card:
+                    case key_bindings.DRAW_CARD:
                         time_elapsed = time.time() - draw_card_timer
                         if time_elapsed > DRAW_CARD_TIME_INTERVAL:
                             # TODO: duplicate code in KEYDOWN handler
@@ -168,7 +95,7 @@ def start_game():
 
                 key = getattr(e, "key")
                 match key:
-                    case key_bindings.draw_card:
+                    case key_bindings.DRAW_CARD:
                         # 按下 D 键时立刻进行一次抽卡
                         # 如果持续按住 KEYDOWN_INITIAL_TIME_INTERVAL
                         # 则之后每隔 DRAW_CARD_TIME_INTERVAL 抽一次卡
@@ -179,7 +106,7 @@ def start_game():
                             game_running = False
                             break
                             
-                        pressed_key = key_bindings.draw_card
+                        pressed_key = key_bindings.DRAW_CARD
                         draw_card_timer = time.time()
             elif e.type == KEYUP:
 
@@ -189,22 +116,23 @@ def start_game():
 
                 key = getattr(e, "key")
                 option = view.sidebar.options[view.sidebar_option_index]
-                if key == key_bindings.cheat:
+                if key == key_bindings.RETURN_TO_TITLE:
+                    restart_game = False
+                    return restart_game
+                elif key == key_bindings.CHEAT:
                     actions.cheat(view, player)
 
                     # TODO: duplicate code (game over checking)
                     if player.has_won():
                         game_running = False
                         break
-                elif key == key_bindings.draw_card:
+                elif key == key_bindings.DRAW_CARD:
                     pass
 
-                elif key == key_bindings.confirm:
+                elif key == key_bindings.CONFIRM:
                     match view.mode:
                         case ViewMode.LEVEL_1:
                             match option:
-                                case SideBarOptions.BACK:
-                                    return False
                                 case SideBarOptions.END_TODAY:
                                     actions.end_today(view, player)
 
@@ -237,10 +165,10 @@ def start_game():
                                             logging.critical(f"unsupported")
                         case _:
                             raise AssertionError(f"Got unexpected view mode: {view.mode}")
-                elif key == key_bindings.cancel:
+                elif key == key_bindings.CANCEL:
                     if view.mode == ViewMode.LEVEL_2:
                         view.mode = ViewMode.LEVEL_1
-                elif key == key_bindings.up:
+                elif key == key_bindings.UP:
                     if view.mode == ViewMode.LEVEL_1:
                         # 注意 actions 列表是自底向上的
                         # 所以 up 会增加索引值
@@ -249,21 +177,21 @@ def start_game():
                     elif view.mode == ViewMode.LEVEL_2:
                         view.item_list_index -= view.item_list.n_cols
 
-                elif key == key_bindings.down:
+                elif key == key_bindings.DOWN:
                     if view.mode == ViewMode.LEVEL_1:
                         view.sidebar_option_index -= 1
                     elif view.mode == ViewMode.LEVEL_2:
                         view.item_list_index += view.item_list.n_cols
                 
-                elif key == key_bindings.left:
+                elif key == key_bindings.LEFT:
                     if view.mode == ViewMode.LEVEL_2:
                         view.item_list_index -= 1
 
-                elif key == key_bindings.right:
+                elif key == key_bindings.RIGHT:
                     if view.mode == ViewMode.LEVEL_2:
                         view.item_list_index += 1
 
-                elif key == key_bindings.save:
+                elif key == key_bindings.SAVE_GAME:
 
                     # PROGRAM_DATA_DIR is created in pygame_boy_advance.py
                     assert os.path.exists(filenames.PROGRAM_DATA_DIR)
@@ -272,7 +200,7 @@ def start_game():
                         pickle.dump(player, file)
                     view.textbox.set_text(messages.SAVE_SUCCESS)
 
-                elif key == key_bindings.load:
+                elif key == key_bindings.LOAD_GAME:
                     filename = filenames.CARD_PRISONER_SAVE_FILE
                     if os.path.exists(filename):
                         with open(filename, "rb") as file:
@@ -281,8 +209,8 @@ def start_game():
                     else:
                         view.textbox.set_text(messages.LOAD_NOT_FOUND)
                 
-                elif key == key_bindings.show_help:
-                    help_subpage()
+                elif key == key_bindings.DISPLAY_HELP:
+                    display_help(messages.HELP)
                 else:
                     logging.critical(f"Ignored KEYUP: {key}")
 
@@ -296,10 +224,23 @@ def start_game():
 
     assert player.is_game_over()
 
+    global_fadeout()  # 全局淡出
     if player.has_won():
-        animations.victory_animation()
+        msg = (
+            "Congratulations! You won!"
+        )
     elif player.is_dead():
-        animations.game_over_animation()
+        msg = player.death_reason
+    msg += (
+        "\n"
+        "(PRESS R TO RESTART)"
+    )
+    lega.draw.text_multi_line(
+        scrmgr.screen,
+        text=msg,
+        reference_point=scrmgr.center,
+    )
+    scrmgr.update_global()
     
     while True:
         for e in pygame.event.get():
@@ -307,8 +248,9 @@ def start_game():
                 terminate()
             elif e.type == KEYUP:
                 key = getattr(e, "key")
-                if key == key_bindings.restart:
-                    return True
+                if key == key_bindings.RESTART_GAME:
+                    restart_game = True
+                    return restart_game
         
         scrmgr.tick()
 

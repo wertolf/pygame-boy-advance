@@ -9,8 +9,6 @@ ABOUT = (
     "Get 10 SSR cards to win!"
 )
 
-BACK = "Return to title page."
-
 END_TODAY = "Sleep and go to the next day."
 
 INVENTORY = "Press Z to view and use cards."
@@ -78,13 +76,19 @@ LOAD_NOT_FOUND = (
 # help
 
 HELP = [
-    "Help Test Page 1\nhello world",
-    "Help Test Page 2\nWelcome!",
-]
+    # Page 1
+    "*** Quick Start ***\n"
+    "\n"
+    "Press D to draw card.\n"
+    "...",
 
-HELP_BOTTOM = "Press left/right to switch page. Press X to leave."
+    # Page 2
+    "*** Background Story ***\n"
+    "\n"
+    "(Ask GPT to fill the blank)",
+]
 
 # game over
 
-GAME_OVER_HUNGER = "GAME OVER: YOU DIED OF HUNGER.\nPress R to restart."
-GAME_OVER_THIRST = "GAME OVER: YOU DIED OF THIRST.\nPress R to restart."
+GAME_OVER_HUNGER = "GAME OVER: YOU DIED OF HUNGER."
+GAME_OVER_THIRST = "GAME OVER: YOU DIED OF THIRST."

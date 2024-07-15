@@ -6,6 +6,8 @@ from lega.screen import scrmgr
 
 from lega.misc import terminate
 
+from config import key_bindings
+
 class GameController:
     def initialize_game(self):
 
@@ -15,6 +17,7 @@ class GameController:
         # Besides, calling them redundantly has little performance impact.
         pygame.init()
         scrmgr.clear_screen_without_update()
+        scrmgr.update_global()
 
         # Starting from here, all remaining steps are necessary.
 
@@ -24,16 +27,23 @@ class GameController:
 
     def start_game(self):
         while self.game_running:
-            self.one_frame()
+            self.main_loop()
     
-    def one_frame(self):
+    def main_loop(self):
         for e in pygame.event.get():
             if e.type == QUIT:
                 terminate()
             elif e.type == KEYUP:
-                ...
+                self.on_key_up(e)
         
         scrmgr.tick()
+    
+    def on_key_up(self, e):
+        key = getattr(e, "key")
+        match key:
+            case key_bindings.RETURN_TO_TITLE:
+                self.game_running = False
+
 
 def main():
     game = GameController()

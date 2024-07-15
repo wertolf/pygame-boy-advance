@@ -84,7 +84,7 @@ def main():
                 return
             elif e.type == KEYUP:
                 key = getattr(e, "key")
-                if key == key_bindings.confirm:
+                if key == key_bindings.CONFIRM:
                     match options[selected_index]:
                         case Options.QUIT:
                             return
@@ -96,11 +96,11 @@ def main():
                     # when return from one of the games, redraw everything
                     pygame.display.set_caption(WINDOW_CAPTION)
                     draw_everything(options, selected_index)
-                elif key == key_bindings.down:
+                elif key == key_bindings.DOWN:
                     if selected_index < len(options) - 1:
                         selected_index += 1
                         draw_everything(options, selected_index)
-                elif key == key_bindings.up:
+                elif key == key_bindings.UP:
                     if selected_index > 0:
                         selected_index -= 1
                         draw_everything(options, selected_index)

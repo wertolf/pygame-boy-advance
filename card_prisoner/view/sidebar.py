@@ -9,7 +9,6 @@ from pygame import Rect, Surface
 from enum import Enum
 
 class SideBarOptions(Enum):
-    BACK = "Back"
     END_TODAY = "End Today"
     INVENTORY = "Inventory"
     SHOP = "Shop"
@@ -20,7 +19,6 @@ class SideBarOptions(Enum):
 class SideBar:
 
     options = [  # bottom-up
-        SideBarOptions.BACK,
         SideBarOptions.END_TODAY,
         SideBarOptions.INVENTORY,
         SideBarOptions.SHOP,

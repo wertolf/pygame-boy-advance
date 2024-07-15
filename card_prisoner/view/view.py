@@ -32,7 +32,7 @@ class View:
         self._mode = ViewMode.LEVEL_1
         self.sidebar.is_activated = True
         self.item_list.is_activated = False
-        self._sidebar_option_index = 0
+        self._sidebar_option_index = len(self.sidebar.options) - 1
         self._item_list_index = 0
 
         self._initialized = True
@@ -122,8 +122,6 @@ class View:
         option = self.sidebar.options[self._sidebar_option_index]
         if self.mode is ViewMode.LEVEL_1:
             match option:
-                case SideBarOptions.BACK:
-                    text = messages.BACK
                 case SideBarOptions.END_TODAY:
                     text = messages.END_TODAY
                 case SideBarOptions.INVENTORY:
