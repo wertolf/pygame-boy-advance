@@ -37,8 +37,6 @@ class View:
 
         self._initialized = True
 
-        self.global_update_needed = True
-    
     @property
     def mode(self):
         return self._mode
@@ -60,12 +58,13 @@ class View:
 
         self.update_default_message()
 
-        self.global_update_needed = True
-
     def draw_everything(self, player):
         self.sidebar.draw_everything(player, selected_index=self.sidebar_option_index)
         self.textbox.draw_everything()
         self.item_list.draw_everything(player, selected_index=self.item_list_index)
+
+        # 由于 view 的各组件的 draw_everything 方法在末尾分别更新了各自的局部
+        # 因此这里不需要在调用 scrmgr.update_global
 
     @property
     def sidebar_option_index(self):
@@ -93,8 +92,6 @@ class View:
 
         self.update_default_message()
 
-        self.global_update_needed = True
-    
     @property
     def item_list_index(self):
         return self._item_list_index
@@ -110,15 +107,13 @@ class View:
 
         self.update_default_message()
 
-        self.global_update_needed = True
-
     def update_default_message(self):
         """
         根据当前选项决定显示的帮助信息
 
         NOTE:
         如果想要给 self.textbox 设定自定义信息，
-        直接调用 self.textbox.set_text 然后将 self.global_update_needed 设置为 True 即可
+        直接调用 self.textbox.set_text 即可
         """
         text = (
             "This is a default message.\n"
@@ -173,4 +168,3 @@ class View:
                             text = messages.EXIT
 
         self.textbox.set_text(text)
-        self.global_update_needed = True

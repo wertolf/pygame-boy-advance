@@ -179,6 +179,7 @@ class ItemList:
             draw_item(self.surface, self.items[selected_index], selected=True, color=self.color, centerx=centerx, centery=centery)
         
         scrmgr.screen.blit(self.surface, self.rect)
+        scrmgr.update_local_area(self.rect)
 
 def draw_item(target_surface, text, selected=False, **kwargs):
     """

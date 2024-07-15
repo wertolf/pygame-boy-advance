@@ -7,13 +7,10 @@ from lega.an import global_fadeout
 
 import lega.draw
 
-def victory_animation(view: View, player: Player):
+def victory_animation():
     """
     胜利动画
     """
-
-    view.draw_everything(player)
-    scrmgr.update_global()
 
     global_fadeout()
 
@@ -22,14 +19,13 @@ def victory_animation(view: View, player: Player):
         centerx=scrmgr.center.x, centery=scrmgr.center.y
     )
 
+    scrmgr.update_global()
 
-def game_over_animation(view: View, player: Player):
+
+def game_over_animation():
     """
     失败动画
     """
-
-    view.draw_everything(player)
-    scrmgr.update_global()
 
     global_fadeout()
 
@@ -39,3 +35,5 @@ def game_over_animation(view: View, player: Player):
         "(PRESS R TO RESTART)",
         reference_point=scrmgr.center,
     )
+
+    scrmgr.update_global()

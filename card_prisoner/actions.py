@@ -1,6 +1,5 @@
 from card_prisoner.model.player import Player
 from card_prisoner.view.view import View
-from card_prisoner.animations import victory_animation, game_over_animation
 from card_prisoner.shared.card_enum import CardEnum
 from card_prisoner.shared.misc import PRICE_PER_CARD, SANITY_INCREASE_AFTER_GOT_SSR
 
@@ -10,32 +9,25 @@ def cheat(view: View, player: Player):
     player.inventory[CardEnum.FOOD].quantity += 5
     player.inventory[CardEnum.WATER].quantity += 5
 
-    # 胜利判断
-    # TODO: duplicate code (see draw_card)
-    if player.has_won():
-        victory_animation(view, player)
-        return
-
     view.textbox.set_text(
         "You pressed the cheat key.\n"
         "Got 5 food card.\n"
         "Got 5 water card."
     )
-    view.global_update_needed = True
 
 def eat_food(view: View, player: Player):
     # update model
     player.eat_food()
 
     # update view
-    view.global_update_needed = True
+    # here we can give textbox some text
 
 def drink_water(view: View, player: Player):
     # update model
     player.drink_water()
 
     # update view
-    view.global_update_needed = True
+    # here we can give textbox some text
 
 def draw_card(view: View, player: Player):
     if player.money >= PRICE_PER_CARD:
@@ -70,16 +62,10 @@ def draw_card(view: View, player: Player):
 
         view.textbox.set_text(text)
 
-        # 胜利判断
-        if player.has_won():
-            victory_animation(view, player)
-            return
     else:  # player.money < PRICE_PER_CARD
         view.textbox.set_text(
             "You do not have enough money!",
         )
-
-    view.global_update_needed = True
 
 def end_today(view: View, player: Player):
 
@@ -97,11 +83,4 @@ def end_today(view: View, player: Player):
         f"Thirst -= {player.thirst_decrease_per_day}\n"
     )
 
-    if player.is_dead():
-        view.textbox.set_text(msg)
-        game_over_animation(view, player)
-        return
-
     view.textbox.set_text(msg)
-
-    view.global_update_needed = True

@@ -33,3 +33,5 @@ def global_fadeout(**kwargs):
         scrmgr.screen.blit(screen_copy, LEFT_TOP_CORNER)
 
         scrmgr.update_global()
+
+        scrmgr.tick()  # FPS 和 fadeout_speed 共同控制 fadeout 的速度

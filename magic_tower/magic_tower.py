@@ -33,7 +33,7 @@ class GameController:
             elif e.type == KEYUP:
                 ...
         
-        scrmgr.update_global()
+        scrmgr.tick()
 
 def main():
     game = GameController()

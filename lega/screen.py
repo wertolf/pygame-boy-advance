@@ -30,15 +30,20 @@ class ScreenManager:
         self.clear_screen_without_update()
         self.update_global()
 
+    def tick(self) -> None:
+        """
+        control the main while loop from running too fast
+        in order to reduce power consumption and generated heat
+        """
+        self.clock.tick(self.fps)
+
     def update_global(self) -> None:
         # cf. self.update_local_area()
         pygame.display.flip()
-        self.clock.tick(self.fps)
 
     def update_local_area(self, area: Rect) -> None:
         # cf. self.update_global()
         pygame.display.update(area)
-        self.clock.tick(self.fps)
 
     def toggle_fullscreen(self) -> None:
         self.is_full_screen = not self.is_full_screen

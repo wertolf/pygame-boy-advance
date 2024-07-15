@@ -50,7 +50,9 @@ class SideBar:
         self.draw_border()
         self.draw_upper(player)
         self.draw_lower(selected_index)
+
         scrmgr.screen.blit(self.surface, self.rect)
+        scrmgr.update_local_area(self.rect)
 
     def draw_border(self):
         if self.is_activated:

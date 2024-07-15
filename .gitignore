@@ -1,1 +1,5 @@
+# python bytecode
 __pycache__/
+
+# custom program data
+program_data/

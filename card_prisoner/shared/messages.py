@@ -5,7 +5,7 @@ ABOUT = (
     "Use arrow keys to navigate.\n"
     "Press Z to confirm, X to cancel.\n"
     "Press D to draw card.\n"
-    # "Press H to view help.\n"
+    "Press H to display help.\n"
     "Get 10 SSR cards to win!"
 )
 
@@ -65,6 +65,26 @@ HUNGER_RESISTANCE = (
 THIRST_RESISTANCE = (
     "not impl"
 )
+
+# save/load
+
+SAVE_SUCCESS = "Game saved."
+LOAD_SUCCESS = "Game loaded."
+LOAD_NOT_FOUND = (
+    "You do not have a save file.\n"
+    "To create one, press the S key."
+)
+
+# help
+
+HELP = [
+    "Help Test Page 1\nhello world",
+    "Help Test Page 2\nWelcome!",
+]
+
+HELP_BOTTOM = "Press left/right to switch page. Press X to leave."
+
+# game over
 
 GAME_OVER_HUNGER = "GAME OVER: YOU DIED OF HUNGER.\nPress R to restart."
 GAME_OVER_THIRST = "GAME OVER: YOU DIED OF THIRST.\nPress R to restart."

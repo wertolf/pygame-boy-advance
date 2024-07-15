@@ -6,12 +6,13 @@ from lega.screen import scrmgr
 from lega.calc import calculate_centery
 import lega.draw
 
-import card_prisoner.main
-import magic_tower.main
+from card_prisoner import card_prisoner
+from magic_tower import magic_tower
 
-from config import key_binding
+from config import filenames, key_bindings
 
 import logging
+import os.path
 
 from enum import Enum
 
@@ -55,10 +56,18 @@ def draw_everything(options, selected_index):
     draw_banner()
     draw_option_list(options, selected_index)
 
+    # 把 update_global 放进 draw_everything
+    # 可以减少 while 循环里面的重复性的代码
+    # 同时由于设计上的简化，我也不打算在 draw_everything 之外的函数中调用 update_global
+    scrmgr.update_global()
+
 def main():
     # initialization
     pygame.init()
     pygame.display.set_caption(WINDOW_CAPTION)
+    if not os.path.exists(filenames.PROGRAM_DATA_DIR):
+        # create directory as needed
+        os.mkdir(filenames.PROGRAM_DATA_DIR)
     options = [
         Options.CARD_PRISONER,
         Options.MAGIC_TOWER,
@@ -75,28 +84,28 @@ def main():
                 return
             elif e.type == KEYUP:
                 key = getattr(e, "key")
-                if key == key_binding.confirm:
+                if key == key_bindings.confirm:
                     match options[selected_index]:
                         case Options.QUIT:
                             return
                         case Options.CARD_PRISONER:
-                            card_prisoner.main.main()
+                            card_prisoner.main()
                         case Options.MAGIC_TOWER:
-                            magic_tower.main.main()
+                            magic_tower.main()
 
                     # when return from one of the games, redraw everything
                     pygame.display.set_caption(WINDOW_CAPTION)
                     draw_everything(options, selected_index)
-                elif key == key_binding.down:
+                elif key == key_bindings.down:
                     if selected_index < len(options) - 1:
                         selected_index += 1
                         draw_everything(options, selected_index)
-                elif key == key_binding.up:
+                elif key == key_bindings.up:
                     if selected_index > 0:
                         selected_index -= 1
                         draw_everything(options, selected_index)
         
-        scrmgr.update_global()
+        scrmgr.tick()
 
 if __name__ == "__main__":
     main()

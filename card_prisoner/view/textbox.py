@@ -47,3 +47,4 @@ class TextBox:
         text_multi_line(self.surface, text, reference_point=self.border_rect.center)
 
         scrmgr.screen.blit(self.surface, self.rect)
+        scrmgr.update_local_area(self.rect)
