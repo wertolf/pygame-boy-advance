@@ -119,6 +119,11 @@ def start_game():
                 if key == key_bindings.RETURN_TO_TITLE:
                     restart_game = False
                     return restart_game
+                elif key == key_bindings.PRINT_SCREEN:
+                    filename = "screenshot.png"
+                    filename = os.path.join(filenames.PROGRAM_DATA_DIR, filename)
+                    pygame.image.save(scrmgr.screen, filename)
+                    view.textbox.set_text("Screenshot saved.")
                 elif key == key_bindings.CHEAT:
                     actions.cheat(view, player)
 

@@ -57,6 +57,9 @@ class ScreenManager:
         self.screen.fill(color_theme.background)
         self.screen.blit(content_backup, self.screen.get_rect())
         self.update_global()
+    
+    def toggle_resolution(self, res) -> None:
+        ...
 
     @property
     def center(self) -> Vector2D:

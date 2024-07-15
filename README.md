@@ -99,6 +99,8 @@ Health == 0 或 Thirst == 0
 
 本项目使用 MIT 许可证。查看 [LICENSE](./LICENSE) 以获得更多信息。
 
+本项目使用的游戏素材有一部分来自[HTML5魔塔样板](https://github.com/ckcz123/mota-js)。该项目使用 BSD-3-Clause 许可证。
+
 ## 关于
 
 ### 项目背景

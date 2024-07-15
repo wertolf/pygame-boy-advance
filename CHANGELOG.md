@@ -14,6 +14,7 @@ major changes
   * 适应架构调整：
     * 在游戏主循环末尾调用 view.draw_everything + scrmgr.tick 习语
     * 将 Game Over 的处理逻辑单独拿出循环，实际上也更加合理
+* 从 mota-js 中导入相关素材并更新 README 的许可证一节
 
 minor changes
 * 文件重命名
@@ -31,6 +32,7 @@ minor changes
   * 删除 BACK 按钮，改用 key_bindings.RETURN_TO_TITLE 键达成同样的功能
   * 进入游戏时被选中的 SideBar 选项改为 ABOUT
   * 移除 animations.py 模块
+  * 基于 pygame.image.save 实现截图功能
 
 ### 为什么将 display.update 与 clock.tick 相分离
 
