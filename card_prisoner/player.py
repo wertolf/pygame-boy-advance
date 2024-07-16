@@ -1,26 +1,18 @@
 from card_prisoner import messages
+from card_prisoner.skill import SkillItem
 from card_prisoner.card import CardNames
-from card_prisoner.item import InventoryItem, SkillItem
+from card_prisoner.item import InventoryItem
 from card_prisoner.talent import N_TALENTS, get_random_talent
 
 import logging
 
-from enum import Enum
-
-class PlayerStatus(Enum):
-    NORMAL = "Normal"
-    FEVER = "Fever"
-
 class Player:
     def __init__(self):
-        self._health = 100
-        self._thirst = 100
-        self._sanity = 100
+        self._HP = 100
+        self._MP = 100
 
         self.age = 1  # number of elapsed days (in game)
-        self.status = PlayerStatus.NORMAL
         self.money = 100
-        self.token = 0  # “命运之尘”代币
         self.inventory = {
             CardNames.SSR: InventoryItem(CardNames.SSR.value, 0),
             CardNames.A: InventoryItem(CardNames.A.value, 0),
@@ -47,66 +39,50 @@ class Player:
     def eat_food(self):
         if self.inventory[CardNames.FOOD].quantity > 0:
             self.inventory[CardNames.FOOD].quantity -= 1
-            self.health += self.health_increase_per_food_card
+            self.HP += self.HP_increase_per_food_card
             
-            logging.critical(f"You ate some food. Health = {self.health}.")
-    
     def drink_water(self):
         if self.inventory[CardNames.WATER].quantity > 0:
             self.inventory[CardNames.WATER].quantity -= 1
-            self.thirst += self.thirst_increase_per_water_card
-
-            logging.critical(f"You drank some water. Thirst = {self.thirst}.")
+            self.MP += self.MP_increase_per_water_card
 
     def sleep(self):
         self.age += 1
 
-        self.health -= self.health_decrease_per_day
-        self.thirst -= self.thirst_decrease_per_day 
+        self.HP -= self.HP_decrease_per_day
+        self.MP -= self.MP_decrease_per_day 
 
         self.money += self.money_earned_per_day
 
     @property
-    def health(self):
-        return self._health
+    def HP(self):
+        return self._HP
     
-    @health.setter
-    def health(self, value):
+    @HP.setter
+    def HP(self, value):
         if value < 0:
             value = 0
         elif value > 100:
             value = 100
-        self._health = value
+        self._HP = value
 
     @property
-    def thirst(self):
-        return self._thirst
+    def MP(self):
+        return self._MP
     
-    @thirst.setter
-    def thirst(self, value):
+    @MP.setter
+    def MP(self, value):
         if value < 0:
             value = 0
         elif value > 100:
             value = 100
-        self._thirst = value
-
-    @property
-    def sanity(self):
-        return self._sanity
-    
-    @sanity.setter
-    def sanity(self, value):
-        if value < 0:
-            value = 0
-        elif value > 100:
-            value = 100
-        self._sanity = value
+        self._MP = value
 
     def is_dead(self):
-        if self.health == 0:
+        if self.HP == 0:
             self.death_reason = messages.GAME_OVER_HUNGER
             return True
-        elif self.thirst == 0:
+        elif self.MP == 0:
             self.death_reason = messages.GAME_OVER_THIRST
             return True
         
@@ -119,7 +95,7 @@ class Player:
         return self.is_dead() or self.has_won()
 
     @property
-    def health_decrease_per_day(self):
+    def HP_decrease_per_day(self):
         value = 20
 
         # TODO: HUNGER_RESIST
@@ -127,7 +103,7 @@ class Player:
         return value
     
     @property
-    def thirst_decrease_per_day(self):
+    def MP_decrease_per_day(self):
         value = 20
 
         # TODO: THIRST RESIST
@@ -143,9 +119,9 @@ class Player:
         return value
 
     @property
-    def health_increase_per_food_card(self):
+    def HP_increase_per_food_card(self):
         return 20
 
     @property
-    def thirst_increase_per_water_card(self):
+    def MP_increase_per_water_card(self):
         return 20

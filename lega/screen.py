@@ -86,6 +86,19 @@ class ScreenManager:
     def font_size_large(self) -> int:
         size = self.font_size_normal * 2
         return size
+    
+    @property
+    def default_line_distance(self) -> int:
+        line_distance = self._win_width // 16 // 2
+        return line_distance
+    
+    @property
+    def default_border_thickness(self) -> int:
+        return self._win_width // 16 // 20
+    
+    @property
+    def default_border_radius(self) -> int:  # 圆角矩形相关
+        return self._win_width // 16 // 4
 
 
 # initialize

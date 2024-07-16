@@ -4,7 +4,7 @@
 
 ## 环境配置
 
-* Python 3.10+
+* Python 3.11+
 * pygame >= 2.6.0
 
 ### Windows
@@ -74,7 +74,7 @@ python -m pdb pygame_boy_advance.py
 
 #### 失败条件
 
-Health == 0 或 Thirst == 0
+HP == 0 或 MP == 0
 
 ### 魔塔 (Magic Tower)
 

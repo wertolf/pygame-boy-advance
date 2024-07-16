@@ -1,14 +1,10 @@
-from lega.draw import text_multi_line
 from lega.screen import scrmgr
+import lega.draw
 
 from pygame import Surface, Rect
 import pygame.draw
 
 from config import color_theme
-
-from card_prisoner.constants import BORDER_RADIUS
-
-from card_prisoner.constants import BORDER_THICKNESS
 
 class TextBox:
     def __init__(self):
@@ -29,22 +25,29 @@ class TextBox:
             border_width, border_height,
         )
 
-        self.text = None
+        self._text = None
     
     def set_text(self, text):
-        self.text = text
+        self._text = text
 
     def draw_everything(self):
         self.surface.fill(color_theme.background)
 
-        pygame.draw.rect(self.surface, color_theme.foreground, self.border_rect, BORDER_THICKNESS, BORDER_RADIUS)
+        # draw border
+        pygame.draw.rect(
+            self.surface,
+            color_theme.foreground,
+            self.border_rect,
+            scrmgr.default_border_thickness,
+            scrmgr.default_border_radius,
+        )
 
-        if self.text is None:
+        if self._text is None:
             text = ""
         else:
-            text = self.text
+            text = self._text
 
-        text_multi_line(self.surface, text, reference_point=self.border_rect.center)
+        lega.draw.text_multi_line(self.surface, text, reference_point=self.border_rect.center)
 
         scrmgr.screen.blit(self.surface, self.rect)
         scrmgr.update_local_area(self.rect)

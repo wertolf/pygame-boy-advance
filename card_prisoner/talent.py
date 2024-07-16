@@ -3,11 +3,19 @@ import random
 
 N_TALENTS = 2  # 玩家所拥有的天赋数量
 
-class TalentNames(Enum):
-    # value 对应希望的文本显示
-    MONEY_MAKER = "Money\nMaker"  # 每日收入增加
-    BARGAINER = "Bar-\ngainer"  # 购买商品时价格降低
-    LUCKYMAN = "Lucky\nMan"  # 抽到 SSR 的概率增加
+class TalentNames(str, Enum):
+    MONEY_MAKER = "$MKR"
+    BARGAIN = "BGN"
+    LUCKY_MAN = "LKY"
+
+TALENT_DESC = {
+    TalentNames.MONEY_MAKER:
+        "Earn more money every day.",
+    TalentNames.BARGAIN:
+        "Buy things in shop at lower prices.",
+    TalentNames.LUCKY_MAN:
+        "More likely to get SSR cards.",
+}
 
 TALENT_POOL = [talent for talent in TalentNames]
 

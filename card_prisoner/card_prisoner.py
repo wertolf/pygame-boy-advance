@@ -4,7 +4,7 @@ from pygame.locals import QUIT
 from pygame.locals import KEYUP, KEYDOWN
 
 from card_prisoner.card import SUPPLY, CardNames
-from card_prisoner.constants import PRICE_PER_CARD, SANITY_INCREASE_AFTER_GOT_SSR
+from card_prisoner.constants import PRICE_PER_CARD
 from card_prisoner.player import Player
 from card_prisoner.view import View
 from card_prisoner.view import ViewMode
@@ -81,12 +81,10 @@ def draw_card(view: View, player: Player):
         text = "Got %s card." % card.name
 
         if card == CardNames.SSR:
-            player.sanity += SANITY_INCREASE_AFTER_GOT_SSR
             text = "GOT SSR CARD!!!"
         elif card not in SUPPLY:
-            sanity_decrease = random.randint(1, 5)
-            player.sanity -= sanity_decrease
-            text += "\nSanity -= %d" % sanity_decrease
+            # TODO: decrease sanity by a random amount
+            ...
 
         view.textbox.set_text(text)
 
@@ -104,12 +102,12 @@ def end_today(view: View, player: Player):
 
     # update view
 
-    view.sidebar_option_index = view.sidebar_option_index  # call action_index.setter to update inventory properly
+    view.sidebar_index = view.sidebar_index  # call action_index.setter to update inventory properly
 
     msg = (
         f"*** Day {player.age:02d} ***\n"
-        f"Health -= {player.health_decrease_per_day}\n"
-        f"Thirst -= {player.thirst_decrease_per_day}\n"
+        f"HP -= {player.HP_decrease_per_day}\n"
+        f"MP -= {player.MP_decrease_per_day}\n"
     )
 
     view.textbox.set_text(msg)
@@ -202,7 +200,7 @@ def start_game():
                 pressed_key = None
 
                 key = getattr(e, "key")
-                option = view.sidebar.options[view.sidebar_option_index]
+                option = view.sidebar.options[view.sidebar_index]
                 if key == key_bindings.RETURN_TO_TITLE:
                     restart_game = False
                     return restart_game
@@ -262,13 +260,13 @@ def start_game():
                         # 注意 actions 列表是自底向上的
                         # 所以 up 会增加索引值
                         # down 会减少索引值
-                        view.sidebar_option_index += 1
+                        view.sidebar_index += 1
                     elif view.mode == ViewMode.LEVEL_2:
                         view.item_list_index -= view.item_list.n_cols
 
                 elif key == key_bindings.DOWN:
                     if view.mode == ViewMode.LEVEL_1:
-                        view.sidebar_option_index -= 1
+                        view.sidebar_index -= 1
                     elif view.mode == ViewMode.LEVEL_2:
                         view.item_list_index += view.item_list.n_cols
                 

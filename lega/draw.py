@@ -56,8 +56,8 @@ def text_multi_line(target_surface, text, reference_point, reference_type="cente
     reference_type: 参照点的类型，目前只支持居中对齐 (center)
     line_distance: 行间距
     """
-    default_line_distance = scrmgr.win_width / 16 / 2
-    line_distance = kwargs.get("line_distance", default_line_distance)
+    default_line_distance = scrmgr.default_line_distance
+    line_distance = kwargs.pop("line_distance", default_line_distance)
     lines = text.split("\n")
 
     reference_x = reference_point[0]

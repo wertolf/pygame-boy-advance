@@ -1,5 +1,5 @@
-from lega.draw import text_single_line
 from lega.screen import scrmgr
+import lega.draw
 
 import logging
 
@@ -8,9 +8,6 @@ import pygame.draw
 
 from config import color_theme
 
-from card_prisoner.constants import BORDER_RADIUS
-
-from card_prisoner.constants import BORDER_THICKNESS
 from card_prisoner.item import Item
 from card_prisoner.card import CardNames
 
@@ -99,14 +96,20 @@ class ItemList:
                 self.items[SkillItemIndex.TALENT_1] = player.talents[0]
                 self.items[SkillItemIndex.TALENT_2] = player.talents[1]
 
-    def draw_border(self):
-        pygame.draw.rect(self.surface, self.color, self.border_rect, BORDER_THICKNESS, BORDER_RADIUS)
+    def _draw_border(self):
+        pygame.draw.rect(
+            self.surface,
+            self.color,
+            self.border_rect,
+            scrmgr.default_border_thickness,
+            scrmgr.default_border_radius,
+        )
 
     def draw_everything(self, player, selected_index):
 
         self.surface.fill(color_theme.background)
 
-        self.draw_border()
+        self._draw_border()
 
         distance_x = 40 + 40 + 40 # 我的 40 你的 40 还有我们中间的 40
         distance_y = 40 + 20 + 40 # 我的 40 你的 40 还有我们中间的 20
@@ -128,8 +131,7 @@ class ItemList:
         row = 0
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
         for item in row_items:
-            item_text = str(item)
-            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
+            self._draw_item(self.surface, item, centerx=centerx, centery=centery)
             centerx += distance_x
         
         # row 2
@@ -140,8 +142,7 @@ class ItemList:
         row = 1
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
         for item in row_items:
-            item_text = str(item)
-            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
+            self._draw_item(self.surface, item, centerx=centerx, centery=centery)
             centerx += distance_x
 
         # row 3
@@ -152,8 +153,7 @@ class ItemList:
         row = 2
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
         for item in row_items:
-            item_text = str(item)
-            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
+            self._draw_item(self.surface, item, centerx=centerx, centery=centery)
             centerx += distance_x
         
         # selecting effect
@@ -166,44 +166,44 @@ class ItemList:
             centery = centery_base + distance_y * i
 
             item = self.items[selected_index]
-            item_text = str(item)
-            draw_item(self.surface, item_text, selected=True, color=self.color, centerx=centerx, centery=centery)
+            self._draw_item(self.surface, item, selected=True, centerx=centerx, centery=centery)
         
         scrmgr.screen.blit(self.surface, self.rect)
         scrmgr.update_local_area(self.rect)
 
-def draw_item(target_surface, text, selected=False, **kwargs):
-    """
-    Specify position using kwargs.
-    """
-    color = kwargs.pop("color", color_theme.foreground)
+    def _draw_item(self, target_surface: Surface, item: Item, selected=False, **kwargs):
+        """
+        Specify position using kwargs.
+        """
+        card_width = scrmgr.win_width // 16  # 80 under 1280x720
+        card_height = card_width
+        card_surface = Surface((card_width, card_height))
+        card_rect = Rect(0, 0, card_width, card_height)
 
-    card_width = 80
-    card_height = 80
-    card_surface = Surface((card_width, card_height))
-    card_rect = Rect(0, 0, card_width, card_height)
+        border_thickness = scrmgr.default_border_thickness
+        if selected:
+            color = color_theme.selected
+            border_thickness *= 2
+        else:
+            color = self.color
 
-    border_thickess = BORDER_THICKNESS
-    if selected:
-        color = color_theme.selected
-        border_thickess *= 2
-
-    pygame.draw.rect(card_surface, color, card_rect, border_thickess, BORDER_RADIUS)
-
-    centery = card_rect.centery - 20
-    if text is None:
-        lines = []
-    else:
-        lines = text.split("\n")
-    for line in lines:
-        text_single_line(
-            card_surface, line,
-            color=color,
-            centerx=card_rect.centerx,
-            centery=centery,
+        pygame.draw.rect(
+            card_surface,
+            color,
+            card_rect,
+            border_thickness,
+            scrmgr.default_border_radius,
         )
-        centery += 20
 
-    card_rect = card_surface.get_rect(**kwargs)
+        lega.draw.text_multi_line(
+            card_surface,
+            str(item),  # 调用 item.__str__()
+            reference_point=(card_rect.centerx, card_rect.centery),
 
-    target_surface.blit(card_surface, card_rect)
+            line_distance=(scrmgr.default_line_distance // 2),
+            color=color,
+        )
+
+        card_rect = card_surface.get_rect(**kwargs)
+
+        target_surface.blit(card_surface, card_rect)

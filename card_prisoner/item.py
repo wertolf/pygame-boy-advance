@@ -20,7 +20,7 @@ class InventoryItem(Item):
         return (
             "\n"
             f"{self.item_name}\n"
-            f"{self.quantity}"
+            f"x{self.quantity}"
         )
         
 
@@ -35,13 +35,3 @@ class ShopItem(InventoryItem):
         self.price = price
         self.status = status
 
-class SkillItem(Item):
-    def __init__(self, item_name: str, level: int):
-        super().__init__(item_name)
-
-        self.level = level
-    def __str__(self):
-        return (
-            f"{self.item_name}\n"
-            f"Lv {self.level}"
-        )

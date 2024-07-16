@@ -19,8 +19,6 @@ class ViewMode(Enum):
 
 class View:
     def __init__(self):
-        self._initialized = False
-
         self.sidebar = SideBar()
         self.item_list = ItemList()
         self.textbox = TextBox()
@@ -32,10 +30,8 @@ class View:
         self._mode = ViewMode.LEVEL_1
         self.sidebar.is_activated = True
         self.item_list.is_activated = False
-        self._sidebar_option_index = len(self.sidebar.options) - 1
+        self._sidebar_index = len(self.sidebar.options) - 1
         self._item_list_index = 0
-
-        self._initialized = True
 
     @property
     def mode(self):
@@ -60,7 +56,7 @@ class View:
         self.update_default_message()
 
     def draw_everything(self, player):
-        self.sidebar.draw_everything(player, selected_index=self.sidebar_option_index)
+        self.sidebar.draw_everything(player, selected_index=self.sidebar_index)
         self.textbox.draw_everything()
         self.item_list.draw_everything(player, selected_index=self.item_list_index)
 
@@ -68,19 +64,19 @@ class View:
         # 因此这里不需要在调用 scrmgr.update_global
 
     @property
-    def sidebar_option_index(self):
-        return self._sidebar_option_index
+    def sidebar_index(self):
+        return self._sidebar_index
     
-    @sidebar_option_index.setter
-    def sidebar_option_index(self, value):
+    @sidebar_index.setter
+    def sidebar_index(self, value):
         if value < 0 or value > len(self.sidebar.options) - 1:
             return
         
         assert self.mode == ViewMode.LEVEL_1, f"Unexpected action change in mode {self.mode}"
 
-        self._sidebar_option_index = value
+        self._sidebar_index = value
 
-        option = self.sidebar.options[self._sidebar_option_index]
+        option = self.sidebar.options[self._sidebar_index]
         match option:
             case SideBarOptions.INVENTORY:
                 self.item_list.mode = ItemListMode.INVENTORY
@@ -120,7 +116,7 @@ class View:
             "This is a default message.\n"
             "To change it, modify View.update_message()."
         )
-        option = self.sidebar.options[self._sidebar_option_index]
+        option = self.sidebar.options[self._sidebar_index]
         if self.mode is ViewMode.LEVEL_1:
             match option:
                 case SideBarOptions.END_TODAY:
