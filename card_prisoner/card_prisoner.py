@@ -3,16 +3,17 @@ import pygame.draw
 from pygame.locals import QUIT
 from pygame.locals import KEYUP, KEYDOWN
 
-from card_prisoner.model.player import Player
-from card_prisoner.view.view import View
-from card_prisoner.view.view import ViewMode
-from card_prisoner.view.item_list import InventoryItemIndex, ShopItemIndex, ItemListMode
-from card_prisoner.view.sidebar import SideBarOptions
-from card_prisoner import actions
-from card_prisoner.shared import messages
+from card_prisoner.card import SUPPLY, CardNames
+from card_prisoner.constants import PRICE_PER_CARD, SANITY_INCREASE_AFTER_GOT_SSR
+from card_prisoner.player import Player
+from card_prisoner.view import View
+from card_prisoner.view import ViewMode
+from card_prisoner.item_list import InventoryItemIndex, ShopItemIndex, ItemListMode
+from card_prisoner.sidebar import SideBarOptions
+from card_prisoner import messages
 from lega.screen import scrmgr
 
-from lega.misc import terminate, display_help
+from lega.misc import terminate, display_help, take_screenshot
 from lega.an import global_fadeout
 
 import lega.draw
@@ -24,8 +25,94 @@ import logging
 import pickle
 import os.path
 import math
+import random
 
 WINDOW_CAPTION = "Card Prisoner"
+
+
+def cheat(view: View, player: Player):
+    player.inventory[CardNames.FOOD].quantity += 5
+    player.inventory[CardNames.WATER].quantity += 5
+
+    view.textbox.set_text(
+        "You pressed the cheat key.\n"
+        "Got 5 food card.\n"
+        "Got 5 water card."
+    )
+
+
+def eat_food(view: View, player: Player):
+    # update model
+    player.eat_food()
+
+    # update view
+    view.textbox.set_text("You ate some food.")
+
+
+def drink_water(view: View, player: Player):
+    # update model
+    player.drink_water()
+
+    # update view
+    view.textbox.set_text("You drank some water.")
+
+
+def draw_card(view: View, player: Player):
+    if player.money >= PRICE_PER_CARD:
+
+        player.money -= PRICE_PER_CARD
+
+        number = random.random()
+        if number < 0.01:  # TODO: hard-coded value
+            card = CardNames.SSR
+        elif number < 0.05:
+            card = CardNames.FOOD
+        elif number < 0.1:
+            card = CardNames.WATER
+        elif number < 0.3:  # TODO: hard-coded value
+            card = CardNames.A
+        elif number < 0.6:  # TODO: hard-coded value
+            card = CardNames.B
+        else:
+            card = CardNames.C
+
+        player.inventory[card].quantity += 1
+
+        text = "Got %s card." % card.name
+
+        if card == CardNames.SSR:
+            player.sanity += SANITY_INCREASE_AFTER_GOT_SSR
+            text = "GOT SSR CARD!!!"
+        elif card not in SUPPLY:
+            sanity_decrease = random.randint(1, 5)
+            player.sanity -= sanity_decrease
+            text += "\nSanity -= %d" % sanity_decrease
+
+        view.textbox.set_text(text)
+
+    else:  # player.money < PRICE_PER_CARD
+        view.textbox.set_text(
+            "You do not have enough money!",
+        )
+
+
+def end_today(view: View, player: Player):
+
+    # update model
+
+    player.sleep()
+
+    # update view
+
+    view.sidebar_option_index = view.sidebar_option_index  # call action_index.setter to update inventory properly
+
+    msg = (
+        f"*** Day {player.age:02d} ***\n"
+        f"Health -= {player.health_decrease_per_day}\n"
+        f"Thirst -= {player.thirst_decrease_per_day}\n"
+    )
+
+    view.textbox.set_text(msg)
 
 def start_game():
 
@@ -72,7 +159,7 @@ def start_game():
                         time_elapsed = time.time() - draw_card_timer
                         if time_elapsed > DRAW_CARD_TIME_INTERVAL:
                             # TODO: duplicate code in KEYDOWN handler
-                            actions.draw_card(view, player)
+                            draw_card(view, player)
 
                             # TODO: duplicate code in KEYDOWN handler
                             if player.has_won():
@@ -99,7 +186,7 @@ def start_game():
                         # 按下 D 键时立刻进行一次抽卡
                         # 如果持续按住 KEYDOWN_INITIAL_TIME_INTERVAL
                         # 则之后每隔 DRAW_CARD_TIME_INTERVAL 抽一次卡
-                        actions.draw_card(view, player)
+                        draw_card(view, player)
 
                         # TODO: duplicate code (game over checking)
                         if player.has_won():
@@ -120,12 +207,9 @@ def start_game():
                     restart_game = False
                     return restart_game
                 elif key == key_bindings.PRINT_SCREEN:
-                    filename = "screenshot.png"
-                    filename = os.path.join(filenames.PROGRAM_DATA_DIR, filename)
-                    pygame.image.save(scrmgr.screen, filename)
-                    view.textbox.set_text("Screenshot saved.")
+                    take_screenshot()
                 elif key == key_bindings.CHEAT:
-                    actions.cheat(view, player)
+                    cheat(view, player)
 
                     # TODO: duplicate code (game over checking)
                     if player.has_won():
@@ -139,7 +223,7 @@ def start_game():
                         case ViewMode.LEVEL_1:
                             match option:
                                 case SideBarOptions.END_TODAY:
-                                    actions.end_today(view, player)
+                                    end_today(view, player)
 
                                     if player.is_dead():
                                         game_running = False
@@ -157,15 +241,15 @@ def start_game():
                                 case ItemListMode.INVENTORY:
                                     match view.item_list_index:
                                         case InventoryItemIndex.FOOD:
-                                            actions.eat_food(view, player)
+                                            eat_food(view, player)
                                         case InventoryItemIndex.WATER:
-                                            actions.drink_water(view, player)
+                                            drink_water(view, player)
                                         case _:
                                             logging.critical(f"unsupported")
                                 case ItemListMode.SHOP:
                                     match view.item_list_index:
                                         case ShopItemIndex.DRAW_1_CARD:
-                                            actions.draw_card(view, player)
+                                            draw_card(view, player)
                                         case _:
                                             logging.critical(f"unsupported")
                         case _:
@@ -238,12 +322,15 @@ def start_game():
         msg = player.death_reason
     msg += (
         "\n"
+        "\n"
         "(PRESS R TO RESTART)"
     )
     lega.draw.text_multi_line(
         scrmgr.screen,
         text=msg,
         reference_point=scrmgr.center,
+        font_size=scrmgr.font_size_large,
+        bold=False,
     )
     scrmgr.update_global()
     
@@ -263,3 +350,4 @@ def main():
     restart_game = True
     while restart_game:
         restart_game = start_game()
+

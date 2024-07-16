@@ -5,9 +5,12 @@ from lega.screen import scrmgr
 
 from pygame.locals import QUIT, KEYUP
 
-from config import key_bindings, color_theme
+from config import key_bindings, color_theme, filenames
 import lega.draw
 import math
+
+import os.path
+import logging
 
 
 def terminate():
@@ -98,6 +101,9 @@ def display_help(message_list):
         
         scrmgr.tick()
 
-
-
+def take_screenshot():
+    filename = "screenshot.png"
+    filename = os.path.join(filenames.PROGRAM_DATA_DIR, filename)
+    pygame.image.save(scrmgr.screen, filename)
+    logging.critical(f"Screenshot saved at {filename}.")
 

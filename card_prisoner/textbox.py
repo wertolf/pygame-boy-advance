@@ -6,9 +6,9 @@ import pygame.draw
 
 from config import color_theme
 
-from card_prisoner.shared.misc import BORDER_RADIUS
+from card_prisoner.constants import BORDER_RADIUS
 
-from card_prisoner.shared.misc import BORDER_THICKNESS
+from card_prisoner.constants import BORDER_THICKNESS
 
 class TextBox:
     def __init__(self):

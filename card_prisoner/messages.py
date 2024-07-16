@@ -40,29 +40,7 @@ EXIT = "Press X to exit."
 
 # Shop Items
 
-DRAW_1_CARD = (
-    "Buy 1 random card using $10.\n"
-    "Shortcut: D"
-)
-
-DRAW_5_CARDS = (
-    "Buy 5 random cards using $50.\n"
-    "(not implemented)"
-)
-
-DRAW_10_CARDS = (
-    "not implemented"
-)
-
 # Skill Items
-
-HUNGER_RESISTANCE = (
-    "not implemented"
-)
-
-THIRST_RESISTANCE = (
-    "not impl"
-)
 
 # save/load
 
@@ -76,13 +54,22 @@ LOAD_NOT_FOUND = (
 # help
 
 HELP = [
-    # Page 1
-    "*** Quick Start ***\n"
+    # start of new page
+    "*** Basic Key Binding ***\n"
     "\n"
+    "Use arrow keys to navigate.\n"
+    "Press Z to confirm, X to cancel.\n"
     "Press D to draw card.\n"
+    "Press H to display help.\n"
     "...",
 
-    # Page 2
+    # start of new page
+    "*** More Key Bindings ***\n"
+    "\n"
+    "Press PrtScn to take a screenshot.\n"
+    "...",
+
+    # start of new page
     "*** Background Story ***\n"
     "\n"
     "(Ask GPT to fill the blank)",
@@ -90,5 +77,10 @@ HELP = [
 
 # game over
 
-GAME_OVER_HUNGER = "GAME OVER: YOU DIED OF HUNGER."
-GAME_OVER_THIRST = "GAME OVER: YOU DIED OF THIRST."
+GAME_OVER_HUNGER = (
+    "YOU DIED OF HUNGER"
+)
+
+GAME_OVER_THIRST = (
+    "YOU DIED OF THIRST"
+)

@@ -5,11 +5,11 @@
 """
 
 from enum import Enum
-from card_prisoner.view.sidebar import SideBar, SideBarOptions
-from card_prisoner.view.item_list import ItemList, ItemListMode, InventoryItemIndex, ShopItemIndex, SkillItemIndex
-from card_prisoner.view.textbox import TextBox
+from card_prisoner.sidebar import SideBar, SideBarOptions
+from card_prisoner.item_list import ItemList, ItemListMode, InventoryItemIndex, ShopItemIndex, SkillItemIndex
+from card_prisoner.textbox import TextBox
 
-from card_prisoner.shared import messages
+from card_prisoner import messages
 
 
 class ViewMode(Enum):
@@ -52,6 +52,7 @@ class View:
             case ViewMode.LEVEL_2:
                 self.sidebar.is_activated = False
                 self.item_list.is_activated = True
+                self.item_list_index = 0
 
             case _:
                 raise AssertionError(f"Got unexpected mode: {self._mode}")
@@ -148,20 +149,10 @@ class View:
                             text = messages.EXIT
                 case ItemListMode.SHOP:
                     match self._item_list_index:
-                        case ShopItemIndex.DRAW_1_CARD:
-                            text = messages.DRAW_1_CARD
-                        case ShopItemIndex.DRAW_5_CARDS:
-                            text = messages.DRAW_5_CARDS
-                        case ShopItemIndex.DRAW_10_CARDS:
-                            text = messages.DRAW_10_CARDS
                         case _:
                             text = messages.EXIT
                 case ItemListMode.SKILLS:
                     match self._item_list_index:
-                        case SkillItemIndex.HUNGER_RESISTANCE:
-                            text = messages.HUNGER_RESISTANCE
-                        case SkillItemIndex.THIRST_RESISTANCE:
-                            text = messages.THIRST_RESISTANCE
                         case _:
                             text = messages.EXIT
 

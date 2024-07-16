@@ -76,6 +76,16 @@ class ScreenManager:
     @property
     def win_width(self) -> int:
         return self._win_width
+    
+    @property
+    def font_size_normal(self) -> int:
+        size = self._win_width // 16 // 4  # 20 for 1280x720
+        return size
+    
+    @property
+    def font_size_large(self) -> int:
+        size = self.font_size_normal * 2
+        return size
 
 
 # initialize

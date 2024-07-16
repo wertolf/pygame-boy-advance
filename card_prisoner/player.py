@@ -1,6 +1,7 @@
-from card_prisoner.shared import messages
-from card_prisoner.shared.card_enum import CardEnum
-from card_prisoner.shared.item import Item
+from card_prisoner import messages
+from card_prisoner.card import CardNames
+from card_prisoner.item import InventoryItem, SkillItem
+from card_prisoner.talent import N_TALENTS, get_random_talent
 
 import logging
 
@@ -21,29 +22,38 @@ class Player:
         self.money = 100
         self.token = 0  # “命运之尘”代币
         self.inventory = {
-            CardEnum.SSR: Item(CardEnum.SSR, 0),
-            CardEnum.A: Item(CardEnum.A, 0),
-            CardEnum.B: Item(CardEnum.B, 0),
-            CardEnum.C: Item(CardEnum.C, 0),
+            CardNames.SSR: InventoryItem(CardNames.SSR.value, 0),
+            CardNames.A: InventoryItem(CardNames.A.value, 0),
+            CardNames.B: InventoryItem(CardNames.B.value, 0),
+            CardNames.C: InventoryItem(CardNames.C.value, 0),
 
-            CardEnum.FOOD: Item(CardEnum.FOOD, 0),
-            CardEnum.WATER: Item(CardEnum.WATER, 0),
+            CardNames.FOOD: InventoryItem(CardNames.FOOD.value, 0),
+            CardNames.WATER: InventoryItem(CardNames.WATER.value, 0),
 
-            CardEnum.ASPIRIN: Item(CardEnum.ASPIRIN, 0),
+            CardNames.ASPIRIN: InventoryItem(CardNames.ASPIRIN.value, 0),
         }
+
+        self.talents = []
+        for i in range(N_TALENTS):
+            talent = get_random_talent()
+            while talent in self.talents:  # retry if already has this talent
+                talent = get_random_talent()
+            self.talents.append(talent)
+        # level=1 是因为天赋只有 1 级
+        self.talents = [SkillItem(talent.value, level=1) for talent in self.talents]
 
         self.death_reason = None
     
     def eat_food(self):
-        if self.inventory[CardEnum.FOOD].quantity > 0:
-            self.inventory[CardEnum.FOOD].quantity -= 1
+        if self.inventory[CardNames.FOOD].quantity > 0:
+            self.inventory[CardNames.FOOD].quantity -= 1
             self.health += self.health_increase_per_food_card
             
             logging.critical(f"You ate some food. Health = {self.health}.")
     
     def drink_water(self):
-        if self.inventory[CardEnum.WATER].quantity > 0:
-            self.inventory[CardEnum.WATER].quantity -= 1
+        if self.inventory[CardNames.WATER].quantity > 0:
+            self.inventory[CardNames.WATER].quantity -= 1
             self.thirst += self.thirst_increase_per_water_card
 
             logging.critical(f"You drank some water. Thirst = {self.thirst}.")
@@ -103,7 +113,7 @@ class Player:
         return False
     
     def has_won(self):
-        return self.inventory[CardEnum.SSR].quantity >= 10
+        return self.inventory[CardNames.SSR].quantity >= 10
     
     def is_game_over(self):
         return self.is_dead() or self.has_won()

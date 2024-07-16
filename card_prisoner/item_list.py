@@ -8,10 +8,11 @@ import pygame.draw
 
 from config import color_theme
 
-from card_prisoner.shared.misc import BORDER_RADIUS
+from card_prisoner.constants import BORDER_RADIUS
 
-from card_prisoner.shared.misc import BORDER_THICKNESS
-from card_prisoner.shared.card_enum import CardEnum
+from card_prisoner.constants import BORDER_THICKNESS
+from card_prisoner.item import Item
+from card_prisoner.card import CardNames
 
 from enum import Enum, IntEnum
 
@@ -79,40 +80,24 @@ class ItemList:
             return color_theme.foreground
 
     def make_items(self, player):
-        self.items = [None] * self.n_cols * self.n_rows
+        self.items = [Item("")] * self.n_cols * self.n_rows
 
         match self.mode:
             case ItemListMode.EMPTY:
                 pass
             case ItemListMode.INVENTORY:
-                self.items[InventoryItemIndex.SSR] = \
-                    "\nSSR\n%d" % player.inventory[CardEnum.SSR].quantity
-                self.items[InventoryItemIndex.A] = \
-                    "\nA\n%d" % player.inventory[CardEnum.A].quantity
-                self.items[InventoryItemIndex.B] = \
-                    "\nB\n%d" % player.inventory[CardEnum.B].quantity
-                self.items[InventoryItemIndex.C] = \
-                    "\nC\n%d" % player.inventory[CardEnum.C].quantity
-
-                self.items[InventoryItemIndex.FOOD] = \
-                    "\nFood\n%d" % player.inventory[CardEnum.FOOD].quantity
-                self.items[InventoryItemIndex.WATER] = \
-                    "\nWater\n%d" % player.inventory[CardEnum.WATER].quantity
-
-                self.items[InventoryItemIndex.ASPIRIN] = \
-                    "\nASP\n%d" % player.inventory[CardEnum.ASPIRIN].quantity
+                self.items[InventoryItemIndex.SSR] = player.inventory[CardNames.SSR]
+                self.items[InventoryItemIndex.A] = player.inventory[CardNames.A]
+                self.items[InventoryItemIndex.B] = player.inventory[CardNames.B]
+                self.items[InventoryItemIndex.C] = player.inventory[CardNames.C]
+                self.items[InventoryItemIndex.FOOD] = player.inventory[CardNames.FOOD]
+                self.items[InventoryItemIndex.WATER] = player.inventory[CardNames.WATER]
+                self.items[InventoryItemIndex.ASPIRIN] = player.inventory[CardNames.ASPIRIN]
             case ItemListMode.SHOP:
-                self.items[ShopItemIndex.DRAW_1_CARD] = \
-                    "Draw\nx1\nCard"
-                self.items[ShopItemIndex.DRAW_5_CARDS] = \
-                    "Draw\nx5\nCards"
-                self.items[ShopItemIndex.DRAW_10_CARDS] = \
-                    "Draw\nx10\nCards"
+                ...
             case ItemListMode.SKILLS:
-                self.items[SkillItemIndex.HUNGER_RESISTANCE] = \
-                    "Hunger\nResist\nLv %d"
-                self.items[SkillItemIndex.THIRST_RESISTANCE] = \
-                    "Thirst\nResist\nLv %d"
+                self.items[SkillItemIndex.TALENT_1] = player.talents[0]
+                self.items[SkillItemIndex.TALENT_2] = player.talents[1]
 
     def draw_border(self):
         pygame.draw.rect(self.surface, self.color, self.border_rect, BORDER_THICKNESS, BORDER_RADIUS)
@@ -133,6 +118,7 @@ class ItemList:
         self.make_items(player)
 
         # TODO: do not use hard-coded number of rows
+        # TODO: duplicate code for 3 rows
 
         # row 1
 
@@ -141,8 +127,9 @@ class ItemList:
 
         row = 0
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
-        for card_info in row_items:
-            draw_item(self.surface, card_info, color=self.color, centerx=centerx, centery=centery)
+        for item in row_items:
+            item_text = str(item)
+            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
             centerx += distance_x
         
         # row 2
@@ -152,8 +139,9 @@ class ItemList:
 
         row = 1
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
-        for card_info in row_items:
-            draw_item(self.surface, card_info, color=self.color, centerx=centerx, centery=centery)
+        for item in row_items:
+            item_text = str(item)
+            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
             centerx += distance_x
 
         # row 3
@@ -163,8 +151,9 @@ class ItemList:
 
         row = 2
         row_items = self.items[self.n_cols * row : self.n_cols * (row + 1)]
-        for card_info in row_items:
-            draw_item(self.surface, card_info, color=self.color, centerx=centerx, centery=centery)
+        for item in row_items:
+            item_text = str(item)
+            draw_item(self.surface, item_text, color=self.color, centerx=centerx, centery=centery)
             centerx += distance_x
         
         # selecting effect
@@ -176,7 +165,9 @@ class ItemList:
             centerx = centerx_base + distance_x * j
             centery = centery_base + distance_y * i
 
-            draw_item(self.surface, self.items[selected_index], selected=True, color=self.color, centerx=centerx, centery=centery)
+            item = self.items[selected_index]
+            item_text = str(item)
+            draw_item(self.surface, item_text, selected=True, color=self.color, centerx=centerx, centery=centery)
         
         scrmgr.screen.blit(self.surface, self.rect)
         scrmgr.update_local_area(self.rect)

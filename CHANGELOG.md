@@ -1,3 +1,10 @@
+## TODO
+
+Card Prisoner
+* [ ] View.update_default_message 方法在设计上感觉很奇怪，寻找别的替代方案
+* [ ] 抽到 SSR 卡时触发额外的动画效果
+* [ ] 使用 B 键开启/关闭背景音乐
+
 ## v0.1.1 (working on it)
 
 major changes
@@ -5,15 +12,22 @@ major changes
   * 将 clock.tick 从 update_global 以及 update_local_area 中分离出来
   * 将 update_global/update_local_area 放进 draw_everything 里面
   * 相关的代码调整以及 bug 修复
-  * 在 lega.misc 里面新增 display_help 函数
+  * 新增 display_help 函数
+  * 新增 take_screenshot 函数：基于 pygame.image.save 实现截图功能
+  * 在 ScreenManager 中新增 font_size_normal 和 font_size_large 两个属性
 * Card Prisoner
   * 实现简易的存档 (key_bindings.SAVE_GAME) 和读档 (key_bindings.LOAD_GAME)
   * 实现帮助界面 (key_bindings.DISPLAY_HELP)
-    * [ ] quick start
+    * basic key bindings
+    * more key bindings
     * [ ] background story 不妨交给 GPT
   * 适应架构调整：
     * 在游戏主循环末尾调用 view.draw_everything + scrmgr.tick 习语
     * 将 Game Over 的处理逻辑单独拿出循环，实际上也更加合理
+  * 在 Item 类中新增 `__str__` 方法用于 ItemList 的绘制
+    并对 ItemList.draw_everything 进行相应修改
+  * 取消 model/view/controler 的显式目录划分，而是在 `__init__.py` 中通过注释表明模块的性质，即到底属于 model/view/controller 中的哪一类
+    * 一个原因是，分成若干子目录之后，每个子目录都会多出一个 `__pycache__` 子目录，看着心烦
 * 从 mota-js 中导入相关素材并更新 README 的许可证一节
 
 minor changes
@@ -32,7 +46,8 @@ minor changes
   * 删除 BACK 按钮，改用 key_bindings.RETURN_TO_TITLE 键达成同样的功能
   * 进入游戏时被选中的 SideBar 选项改为 ABOUT
   * 移除 animations.py 模块
-  * 基于 pygame.image.save 实现截图功能
+  * 将 actions.py 与 card_prisoner.py 整合
+  * (bug fix) 进入 2 级列表时，索引重置为零
 
 ### 为什么将 display.update 与 clock.tick 相分离
 

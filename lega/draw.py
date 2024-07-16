@@ -24,8 +24,8 @@ def text_single_line(target_surface, text, selected=False, **kwargs):
 
     bold = kwargs.pop("bold", True)
     antialias = kwargs.pop("antialias", True)
-    default_font_size = scrmgr.win_width // 16 // 4
-    font_size = kwargs.pop("size", default_font_size)
+    default_font_size = scrmgr.font_size_normal
+    font_size = kwargs.pop("font_size", default_font_size)
     color = kwargs.pop("color", color_theme.foreground)
 
     font_object = pygame.font.SysFont("Courier New", font_size, bold)
@@ -70,5 +70,5 @@ def text_multi_line(target_surface, text, reference_point, reference_type="cente
         reference_y = calculate_centery(n_lines, reference_y, line_distance)
 
     for line in lines:
-        text_single_line(target_surface, line, centerx=reference_x, centery=reference_y)
+        text_single_line(target_surface, line, centerx=reference_x, centery=reference_y, **kwargs)
         reference_y += line_distance

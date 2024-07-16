@@ -6,7 +6,7 @@ from lega.screen import scrmgr
 from lega.calc import calculate_centery
 import lega.draw
 
-from card_prisoner import card_prisoner
+import card_prisoner
 from magic_tower import magic_tower
 
 from config import filenames, key_bindings
@@ -24,16 +24,16 @@ class Options(str, Enum):
     CARD_PRISONER = "Card Prisoner"
     MAGIC_TOWER = "Magic Tower"
     CHINESE_CHECKERS = "Chinese Checkers"
+    SUDOKU = "Sudoku"
 
 def draw_banner():
     """
     绘制横幅
     """
-    font_size = scrmgr.win_width // 16 // 2
     centery = scrmgr.win_width // 16
     lega.draw.text_single_line(
         scrmgr.screen, BANNER,
-        size=font_size,
+        font_size=scrmgr.font_size_large,
         centerx=scrmgr.center.x, centery=centery,
     )
 
@@ -72,6 +72,7 @@ def main():
         Options.CARD_PRISONER,
         Options.MAGIC_TOWER,
         # Options.CHINESE_CHECKERS,
+        # Options.SUDOKU,
         Options.QUIT,
     ]
     selected_index = 0
