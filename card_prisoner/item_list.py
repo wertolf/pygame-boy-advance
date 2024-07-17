@@ -9,7 +9,14 @@ import pygame.draw
 from config import color_theme
 
 from card_prisoner.item import Item
-from card_prisoner.card import CardNames
+from card_prisoner.item import (
+    SSR,
+    A,
+    B,
+    C,
+    FOOD,
+    WATER,
+)
 
 from enum import Enum, IntEnum
 
@@ -42,17 +49,17 @@ class SkillItemIndex(IntEnum):
 
 class ItemList:
     def __init__(self):
-        self.width = scrmgr.win_width * 3 / 4
-        self.height = scrmgr.win_height * 5 / 9
-        self.surface = Surface((self.width, self.height))
+        width = scrmgr.win_width * 3 / 4
+        height = scrmgr.win_height * 5 / 9
+        self.surface = Surface((width, height))
         self.rect = self.surface.get_rect(bottom=scrmgr.win_height, right=scrmgr.win_width)
 
         padding_x = 80
         padding_top = 10
         padding_bottom = 20
         padding_y = padding_top + padding_bottom
-        border_width = self.width - padding_x
-        border_height = self.height - padding_y
+        border_width = width - padding_x
+        border_height = height - padding_y
         self.border_rect = Rect(
             padding_x * 0.5, padding_top,
             border_width, border_height,
@@ -61,7 +68,6 @@ class ItemList:
         # maximum: 3 rows, 7 columns
         self.n_rows = 3
         self.n_cols = 7
-
 
         self.mode = ItemListMode.EMPTY
 
@@ -89,18 +95,18 @@ class ItemList:
             return color_theme.foreground
 
     def make_items(self, player):
-        self.items = [Item("")] * self.n_cols * self.n_rows
+        self.items = [Item()] * self.n_cols * self.n_rows
 
         match self.mode:
             case ItemListMode.EMPTY:
                 pass
             case ItemListMode.INVENTORY:
-                self.items[InventoryItemIndex.SSR] = player.inventory[CardNames.SSR]
-                self.items[InventoryItemIndex.A] = player.inventory[CardNames.A]
-                self.items[InventoryItemIndex.B] = player.inventory[CardNames.B]
-                self.items[InventoryItemIndex.C] = player.inventory[CardNames.C]
-                self.items[InventoryItemIndex.FOOD] = player.inventory[CardNames.FOOD]
-                self.items[InventoryItemIndex.WATER] = player.inventory[CardNames.WATER]
+                self.items[InventoryItemIndex.SSR] = player.inventory[SSR]
+                self.items[InventoryItemIndex.A] = player.inventory[A]
+                self.items[InventoryItemIndex.B] = player.inventory[B]
+                self.items[InventoryItemIndex.C] = player.inventory[C]
+                self.items[InventoryItemIndex.FOOD] = player.inventory[FOOD]
+                self.items[InventoryItemIndex.WATER] = player.inventory[WATER]
             case ItemListMode.SHOP:
                 ...
             case ItemListMode.SKILLS:

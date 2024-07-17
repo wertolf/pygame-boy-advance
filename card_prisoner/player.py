@@ -1,10 +1,17 @@
 from card_prisoner import messages
-from card_prisoner.skill import SkillItem
-from card_prisoner.card import CardNames
-from card_prisoner.item import InventoryItem
-from card_prisoner.talent import N_TALENTS, get_random_talent
+from card_prisoner.item import SkillItem
+from card_prisoner.item import InventoryItem, TALENT_DICT
+from card_prisoner.item import (
+    SSR,
+    A,
+    B,
+    C,
+    FOOD,
+    WATER,
+)
 
 import logging
+import random
 
 class Player:
     def __init__(self):
@@ -14,34 +21,42 @@ class Player:
         self.age = 1  # number of elapsed days (in game)
         self.money = 100
         self.inventory = {
-            CardNames.SSR: InventoryItem(CardNames.SSR.value, 0),
-            CardNames.A: InventoryItem(CardNames.A.value, 0),
-            CardNames.B: InventoryItem(CardNames.B.value, 0),
-            CardNames.C: InventoryItem(CardNames.C.value, 0),
-
-            CardNames.FOOD: InventoryItem(CardNames.FOOD.value, 0),
-            CardNames.WATER: InventoryItem(CardNames.WATER.value, 0),
+            SSR: InventoryItem(SSR, 0),
+            A: InventoryItem(A, 0),
+            B: InventoryItem(B, 0),
+            C: InventoryItem(C, 0),
+            FOOD: InventoryItem(FOOD, 0),
+            WATER: InventoryItem(WATER, 0),
         }
 
+        N_TALENTS = 2  # 玩家所拥有的天赋数量
+        TALENT_POOL = list(TALENT_DICT.keys())
         self.talents = []
-        for i in range(N_TALENTS):
-            talent = get_random_talent()
+        for _ in range(N_TALENTS):
+            # TODO: duplicate code
+            i = random.randint(0, len(TALENT_POOL) - 1)
+            talent = TALENT_POOL[i]
             while talent in self.talents:  # retry if already has this talent
-                talent = get_random_talent()
+                # TODO: duplicate code
+                i = random.randint(0, len(TALENT_POOL) - 1)
+                talent = TALENT_POOL[i]
             self.talents.append(talent)
         # level=1 是因为天赋只有 1 级
-        self.talents = [SkillItem(talent, level=1) for talent in self.talents]
+        self.talents = [
+            SkillItem(talent, level=1)
+            for talent in self.talents
+        ]
 
         self.death_reason = None
     
     def eat_food(self):
-        if self.inventory[CardNames.FOOD].quantity > 0:
-            self.inventory[CardNames.FOOD].quantity -= 1
+        if self.inventory[FOOD].quantity > 0:
+            self.inventory[FOOD].quantity -= 1
             self.HP += self.HP_increase_per_food_card
             
     def drink_water(self):
-        if self.inventory[CardNames.WATER].quantity > 0:
-            self.inventory[CardNames.WATER].quantity -= 1
+        if self.inventory[WATER].quantity > 0:
+            self.inventory[WATER].quantity -= 1
             self.MP += self.MP_increase_per_water_card
 
     def sleep(self):
@@ -87,7 +102,7 @@ class Player:
         return False
     
     def has_won(self):
-        return self.inventory[CardNames.SSR].quantity >= 10
+        return self.inventory[SSR].quantity >= 10
     
     def is_game_over(self):
         return self.is_dead() or self.has_won()

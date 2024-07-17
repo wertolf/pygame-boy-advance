@@ -2,18 +2,21 @@
 
 ### Card Prisoner
 
-关键挑战
+主线
 * [ ] 实现“库存”“商店”“技能栏”共用同一个屏幕区域并进行切换
 
-其他
+主线相关
+* [ ] SideBarOptions 感觉也属于 Enum 的滥用
 * [ ] GameController._update_default_message 在 ItemList 的不同 mode 下的工作逻辑不同
+* [ ] 优化抽卡的概率相关逻辑
 * [ ] ItemList.make_items 在设计上有点奇怪
 * [ ] View.draw_everything 需要用到 Player 作为参数，好像有点奇怪
+
+支线
 * [ ] 抽到 SSR 卡时触发额外的动画效果
 * [ ] 使用 B 键开启/关闭背景音乐
 * [ ] (bug fix) 全局淡出即使已经看不到内容了还是要等待一段额外的时间才能看到 game over 的文本
 * [ ] ScreenManager 的 UML 类图
-* [ ] 选中给定 Skill 时显示相应的说明文字
 
 ## v0.1.1 (working on it)
 
@@ -34,6 +37,8 @@ major changes
     * 新增 default_border_thickness 属性
     * 新增 default_border_radius 属性
 * Card Prisoner
+  * 重构：重新定义绘制 Item 及其 description 所需要用到的字符串常量的组织结构
+  * 重构：将 start_game 分解为 GameController 的若干方法
   * 实现简易的存档 (key_bindings.SAVE_GAME) 和读档 (key_bindings.LOAD_GAME)
   * 实现帮助界面 (key_bindings.DISPLAY_HELP)
     * basic key bindings
@@ -60,6 +65,7 @@ major changes
       * on_arrow_key_up
       * on_confirm
       * on_cancel
+    * 取消 width 和 height 成员，因为它们已经隐含在 rect 中
   * 调整游戏机制
     * 简化：取消药物类卡片
 * 从 mota-js 中导入素材

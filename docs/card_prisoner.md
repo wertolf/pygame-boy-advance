@@ -1,10 +1,15 @@
 # 卡片囚徒 (Card Prisoner) 设计文档
 
-## 经验总结
+## 经验总结 (Lessons Learned)
+
+### 道：原则 (Principles)
 
 * 简单源于规整 (simplicity favors regularity)
 * Rome wasn't built in one day.
 * 李艺老师语：好的项目都是重构出来的
+* 管理预期：新手很容易眼高手低，想实现的功能太多，结果完工遥遥无期，最终草草了事或者放弃
+
+### 术：技术细节 (Techniques)
 
 * 同样的内容，可以用简单的视觉效果呈现，也可以用复杂的效果呈现；
   为了尽快完成项目，应该先用简单的效果
@@ -13,7 +18,6 @@
   灵活调整标识符、文件名以及字符串字面值常量
 * 不要一学什么新的语言特性或者知识点就着急在项目中使用，不一定合适
 * 相对于窗口的宽度/高度设置各类长度/尺寸，尽量少用绝对的像素值
-* 管理预期：新手很容易眼高手低，想实现的功能太多，结果完工遥遥无期，最终草草了事或者放弃
 
 ## 基本原则：简化
 
@@ -29,7 +33,30 @@
 * 如果按钮和按键可以达成同样的目的，不妨只保留一个，
   否则会产生相同的事件处理代码，增加维护成本
 
+## 设计细节
+
+### rect 与 border_rect 的区别
+
+rect 是该组件在屏幕上所占的区域
+
+border_rect 是该组件的边框及边框内的内容**相对于 rect** 所占的区域
+
 ## Ideas
+
+### 2024-07-17 13:00
+
+我们本质上只是需要一个 scalable 的方式来为不同的 Item (Card, Skill, ...)
+指定其缩写 (abbr) 及描述 (desc)
+* abbr 用于 Item 的绘制
+* desc 用于帮助文本的显示
+
+因此 XML 和 JSON 和 Python 的 `dict` 都能完成我们的需求
+
+既然项目整体都是基于 Python 那么不妨沿用 Python 内置的 `dict` 类型
+
+顺便到 Real Python 上对相关知识点进行复习和深化
+
+https://realpython.com/python-dicts/
 
 ### 2024-07-17 11:00
 
@@ -41,6 +68,16 @@ SideBar 和 ItemList
 * 更新相应的 option index 或 item index
 * 更新 textbox 的文本
 * 重绘整个屏幕的内容
+
+
+除 QUIT 外，Card Prisoner 实际上只需要处理两类事件：KEYUP 和 KEYDOWN
+并且相应事件处理代码的结构都是
+* 判断是哪个 key
+  * 一连串 if/elif
+  * match/case
+* 执行相应的操作
+  * 更新 model
+  * 在 view 上反映 model 的更新：更新 view
 
 ### 2024-07-16 晚间漫步
 

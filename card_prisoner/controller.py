@@ -1,16 +1,24 @@
 import lega.draw
 from card_prisoner import messages
-from card_prisoner.card import SUPPLY, CardNames
 from card_prisoner.constants import DRAW_CARD_TIME_INTERVAL, KEYDOWN_INITIAL_INTERVAL, PRICE_PER_CARD
 from card_prisoner.item_list import InventoryItemIndex, ItemListMode, ShopItemIndex
 from card_prisoner.player import Player
 from card_prisoner.sidebar import SideBarOptions
 from card_prisoner.view import View, ViewMode
-from card_prisoner.talent import TALENT_DESC, TALENT_POOL
+from card_prisoner.item import ITEM_DICT
 from config import filenames, key_bindings
 from lega.an import global_fadeout
 from lega.misc import display_help, take_screenshot, terminate
 from lega.screen import scrmgr
+from card_prisoner.item import (
+    SSR,
+    A,
+    B,
+    C,
+    FOOD,
+    WATER,
+    SUPPLY,
+)
 
 
 import pygame
@@ -236,7 +244,7 @@ class GameController:
                         self._view.mode = ViewMode.LEVEL_2
                         self._view.item_list.mode = ItemListMode.INVENTORY
                         self._view.item_list.selected_item_index = 0
-                        # self._view.item_list.make_items(self._player)
+                        self._view.item_list.make_items(self._player)
                     case SideBarOptions.SHOP:
                         ...
                     case SideBarOptions.SKILLS:
@@ -309,8 +317,8 @@ class GameController:
 
         # update model
 
-        self._player.inventory[CardNames.FOOD].quantity += 5
-        self._player.inventory[CardNames.WATER].quantity += 5
+        self._player.inventory[FOOD].quantity += 5
+        self._player.inventory[WATER].quantity += 5
 
         # update view
 
@@ -332,23 +340,23 @@ class GameController:
 
             number = random.random()
             if number < 0.01:  # TODO: hard-coded value
-                card = CardNames.SSR
+                card = SSR
             elif number < 0.05:
-                card = CardNames.FOOD
+                card = FOOD
             elif number < 0.1:
-                card = CardNames.WATER
+                card = WATER
             elif number < 0.3:  # TODO: hard-coded value
-                card = CardNames.A
+                card = A
             elif number < 0.6:  # TODO: hard-coded value
-                card = CardNames.B
+                card = B
             else:
-                card = CardNames.C
+                card = C
 
             self._player.inventory[card].quantity += 1
 
-            text = "Got %s card." % card.name
+            text = "Got %s." % card
 
-            if card == CardNames.SSR:
+            if card == SSR:
                 text = "GOT SSR CARD!!!"
             elif card not in SUPPLY:
                 # TODO: decrease sanity by a random amount
@@ -425,25 +433,19 @@ class GameController:
                     case SideBarOptions.ABOUT:
                         text = messages.ABOUT
             case ViewMode.LEVEL_2:
-                match self._view.item_list.mode:
-                    case ItemListMode.INVENTORY:
-                        match self._view.item_list.selected_item_index:
-                            case InventoryItemIndex.SSR:
-                                text = messages.SSR
-                            case InventoryItemIndex.FOOD:
-                                text = messages.FOOD
-                            case InventoryItemIndex.WATER:
-                                text = messages.WATER
-                            case _:
-                                text = messages.EXIT
-                    case ItemListMode.SHOP:
-                        ...
-                    case ItemListMode.SKILLS:
-                        item = self._view.item_list.items[self._view.item_list.selected_item_index]
-                        name = item.item_name
-                        if name in TALENT_POOL:
-                            text = TALENT_DESC[name]
-                        else:
-                            text = messages.EXIT
+                item = self._view.item_list.items[self._view.item_list.selected_item_index]
+                name = item.item_name
+
+                # even empty items are instances of Item(EMPTY_ITEM)
+                assert name in ITEM_DICT.keys()
+
+                desc = ITEM_DICT[name]["desc"]
+
+                # 在这里可以按照自己的想法定义帮助文本的显示格式
+                text = (
+                    f"{name.upper()}\n"  # title
+                    "\n"
+                    f"{desc}"  # description
+                )
 
         self._view.textbox.set_text(text)

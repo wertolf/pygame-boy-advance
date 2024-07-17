@@ -19,23 +19,6 @@ SKILLS = "Press Z to view and upgrade skills."
 
 # Inventory Items
 
-SSR = (
-    "Very very rare card.\n"
-    "Get 10 of this card to win the game!"
-)
-
-FOOD = (
-    "This card gives you some food."
-)
-
-WATER = (
-    "This card gives you some water."
-)
-
-ASPIRIN = (
-    "This card cures your fever."
-)
-
 EXIT = "Press X to exit."
 
 # Shop Items

@@ -26,16 +26,16 @@ class SideBar:
     ]
 
     def __init__(self):
-        self.width = scrmgr.win_width / 4
-        self.height = scrmgr.win_height
-        self.surface = Surface((self.width, self.height))
-        self.rect = Rect(0, 0, self.width, self.height)
+        width = scrmgr.win_width / 4
+        height = scrmgr.win_height
+        self.surface = Surface((width, height))
+        self.rect = Rect(0, 0, width, height)
 
         padding_x = scrmgr.win_width / 16
         padding_y = scrmgr.win_height / 9 / 2
         self.border_rect = Rect(
             padding_x * 0.5, padding_y * 0.5,
-            self.width - padding_x, self.height - padding_y,
+            width - padding_x, height - padding_y,
         )
 
         self.is_activated = False

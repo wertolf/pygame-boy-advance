@@ -8,17 +8,17 @@ from config import color_theme
 
 class TextBox:
     def __init__(self):
-        self.width = scrmgr.win_width * 3 / 4
-        self.height = scrmgr.win_height * 4 / 9
-        self.surface = Surface((self.width, self.height))
+        width = scrmgr.win_width * 3 / 4
+        height = scrmgr.win_height * 4 / 9
+        self.surface = Surface((width, height))
         self.rect = self.surface.get_rect(top=0, right=scrmgr.win_width)
 
         padding_x = 80
         padding_top = 20
         padding_bottom = 10
         padding_y = padding_top + padding_bottom
-        border_width = self.width- padding_x
-        border_height = self.height - padding_y
+        border_width = width- padding_x
+        border_height = height - padding_y
         self.border_rect = Rect(
             # left and top are relative to local surface
             padding_x * 0.5, padding_top,
