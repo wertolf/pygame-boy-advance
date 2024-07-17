@@ -15,15 +15,7 @@ INVENTORY = "Press Z to view and use cards."
 
 SHOP = "Press Z to view and buy shop items."
 
-SKILLS = "Press Z to view and upgrade skills."
-
-# Inventory Items
-
-EXIT = "Press X to exit."
-
-# Shop Items
-
-# Skill Items
+TALENT = "Press Z to view your talents."
 
 # save/load
 

@@ -9,6 +9,7 @@ C = "C-class Card"
 FOOD = "Food Card"
 WATER = "Water Card"
 
+ORDINARY = (A, B, C)
 SUPPLY = (FOOD, WATER)
 
 CARD_DICT = {
@@ -52,7 +53,7 @@ CARD_DICT = {
 
 }
 
-# Talents (special skills)
+# Talents
 
 MONEY_MAKER = "Money Maker"
 SHOP_BARGAINER = "Shop Bargainer"
@@ -74,33 +75,13 @@ TALENT_DICT = {
     LUCKY_MAN: {
         "abbr": "LKY",
         "desc": (
-            "More likely to get SSR cards."
-        ),
-    },
-}
-
-# Skills
-
-HUNGER_RESIST = "Hunger Resistance"
-THIRST_RESIST = "Thirst Resistance"
-
-SKILL_DICT = {
-    HUNGER_RESIST: {
-        "abbr": "HGR--",
-        "desc": (
-            "Reduce HP decrease per day."
-        ),
-    },
-    THIRST_RESIST: {
-        "abbr": "TST--",
-        "desc": (
-            "Reduce MP decrease per day."
+            "More likely to get SSR & supply cards."
         ),
     },
 }
 
 # combine the above dicts together
-EMPTY_ITEM = ""
+EMPTY_ITEM = "Empty"
 ITEM_DICT = {
     EMPTY_ITEM: {
         "abbr": "",
@@ -111,7 +92,6 @@ ITEM_DICT = {
     },
 }
 ITEM_DICT.update(CARD_DICT)
-ITEM_DICT.update(SKILL_DICT)
 ITEM_DICT.update(TALENT_DICT)
 
 class Item:
@@ -125,7 +105,6 @@ class Item:
         """
         return self.abbr
 
-
 class InventoryItem(Item):
     def __init__(self, item_name: str, quantity: int):
         super().__init__(item_name)
@@ -138,20 +117,32 @@ class InventoryItem(Item):
             f"x{self.quantity}"
         )
         
-
-class ShopItemStatus(Enum):
-    ON_SALE = 1  # 在售：我可以买的东西
-    # TODO: 我要卖的东西应该称作什么
-
-class ShopItem(InventoryItem):
-    def __init__(self, item_name: str, quantity: int, price: InventoryItem, status: ShopItemStatus):
+class OnSaleItem(InventoryItem):
+    """
+    在售商品
+    """
+    def __init__(self, item_name: str, quantity: int, price: InventoryItem):
         super().__init__(item_name, quantity)
-        self.price = price
-        self.status = status
+        self.price = price  # exchange this item using another (name, quantity)
 
 
-class SkillItem(Item):
-    def __init__(self, item_name: str, level: int):
+class WantedItem(InventoryItem):
+    """
+    收购商品
+    """
+    def __init__(self, item_name: str, price: int):
+        super().__init__(item_name, quantity=1)  # wanted items' quantity are always 1
+        self.price = price  # dollars
+    def __str__(self):
+        return (
+            "\n"
+            f"{self.abbr}\n"
+            f"${self.price}"
+        )
+
+
+class TalentItem(Item):
+    def __init__(self, item_name: str, level):
         super().__init__(item_name)
 
         self.level = level

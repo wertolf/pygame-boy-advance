@@ -11,7 +11,7 @@ class SideBarOptions(Enum):
     END_TODAY = "End Today"
     INVENTORY = "Inventory"
     SHOP = "Shop"
-    SKILLS = "Skills"
+    TALENT = "Talent"
     ABOUT = "About"
 
 
@@ -21,7 +21,7 @@ class SideBar:
         SideBarOptions.END_TODAY,
         SideBarOptions.INVENTORY,
         SideBarOptions.SHOP,
-        SideBarOptions.SKILLS,
+        SideBarOptions.TALENT,
         SideBarOptions.ABOUT,
     ]
 
@@ -40,6 +40,11 @@ class SideBar:
 
         self.is_activated = False
 
+        self.day = -1
+        self.money_value = -1
+        self.HP_value = -1
+        self.MP_value = -1
+
         # 初始状态下，选择最上面的选项
         self._selected_option_index = len(self.options) - 1
     
@@ -54,10 +59,10 @@ class SideBar:
 
         self._selected_option_index = value
 
-    def draw_everything(self, player):
+    def draw_everything(self):
         self.surface.fill(color_theme.background)
         self._draw_border()
-        self._draw_upper(player)
+        self._draw_upper()
         self._draw_lower()
 
         scrmgr.screen.blit(self.surface, self.rect)
@@ -77,15 +82,15 @@ class SideBar:
             scrmgr.default_border_radius,
         )
 
-    def _draw_upper(self, player):
+    def _draw_upper(self):
         """
         Simplicity favors regularity.
         """
         labels = [  # top-down
-            f"Day {player.age}",
-            f"$ {player.money}",
-            f"HP: {player.HP:3d}/100",
-            f"MP: {player.MP:3d}/100",
+            f"Day {self.day}",
+            f"$ {self.money_value}",
+            f"HP: {self.HP_value:3d}/100",
+            f"MP: {self.MP_value:3d}/100",
         ]
 
         centery = self.border_rect.top

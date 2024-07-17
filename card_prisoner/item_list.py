@@ -8,7 +8,6 @@ import pygame.draw
 
 from config import color_theme
 
-from card_prisoner.item import Item
 from card_prisoner.item import (
     SSR,
     A,
@@ -17,6 +16,7 @@ from card_prisoner.item import (
     FOOD,
     WATER,
 )
+from card_prisoner.item import Item
 
 from enum import Enum, IntEnum
 
@@ -24,7 +24,7 @@ class ItemListMode(Enum):
     EMPTY = 0
     INVENTORY = 1
     SHOP = 2
-    SKILLS = 3
+    TALENT = 3
 
 class InventoryItemIndex(IntEnum):
     SSR = 0
@@ -37,17 +37,11 @@ class InventoryItemIndex(IntEnum):
     WATER = 8
 
 class ShopItemIndex(IntEnum):
-    DRAW_1_CARD = 14
-    DRAW_5_CARDS = 15
-    DRAW_10_CARDS = 16
-
-class SkillItemIndex(IntEnum):
-    TALENT_1 = 0
-    TALENT_2 = 1
-    HUNGER_RESISTANCE = 7
-    THIRST_RESISTANCE = 8
+    ON_SALE_ITEM_1 = 0
+    WANTED_ITEM_1 = 14
 
 class ItemList:
+    items: list[Item]
     def __init__(self):
         width = scrmgr.win_width * 3 / 4
         height = scrmgr.win_height * 5 / 9
@@ -94,25 +88,6 @@ class ItemList:
         else:
             return color_theme.foreground
 
-    def make_items(self, player):
-        self.items = [Item()] * self.n_cols * self.n_rows
-
-        match self.mode:
-            case ItemListMode.EMPTY:
-                pass
-            case ItemListMode.INVENTORY:
-                self.items[InventoryItemIndex.SSR] = player.inventory[SSR]
-                self.items[InventoryItemIndex.A] = player.inventory[A]
-                self.items[InventoryItemIndex.B] = player.inventory[B]
-                self.items[InventoryItemIndex.C] = player.inventory[C]
-                self.items[InventoryItemIndex.FOOD] = player.inventory[FOOD]
-                self.items[InventoryItemIndex.WATER] = player.inventory[WATER]
-            case ItemListMode.SHOP:
-                ...
-            case ItemListMode.SKILLS:
-                self.items[SkillItemIndex.TALENT_1] = player.talents[0]
-                self.items[SkillItemIndex.TALENT_2] = player.talents[1]
-
     def _draw_border(self):
         pygame.draw.rect(
             self.surface,
@@ -122,20 +97,22 @@ class ItemList:
             scrmgr.default_border_radius,
         )
 
-    def draw_everything(self, player):
+    def draw_everything(self):
 
         self.surface.fill(color_theme.background)
-
         self._draw_border()
+        self._draw_items()
 
+        scrmgr.screen.blit(self.surface, self.rect)
+        scrmgr.update_local_area(self.rect)
+
+    def _draw_items(self):
         distance_x = 40 + 40 + 40 # 我的 40 你的 40 还有我们中间的 40
         distance_y = 40 + 20 + 40 # 我的 40 你的 40 还有我们中间的 20
 
         centerx_base = self.border_rect.left + 40 + 40
         centery_base = self.border_rect.top + 40 + 40 + 5
         # 之所以额外加 5 是因为后来缩小了 inventory 和 textbox 之间的空隙
-
-        self.make_items(player)
 
         # TODO: do not use hard-coded number of rows
         # TODO: duplicate code for 3 rows
@@ -185,9 +162,6 @@ class ItemList:
             item = self.items[self.selected_item_index]
             self._draw_item(self.surface, item, selected=True, centerx=centerx, centery=centery)
         
-        scrmgr.screen.blit(self.surface, self.rect)
-        scrmgr.update_local_area(self.rect)
-
     def _draw_item(self, target_surface: Surface, item: Item, selected=False, **kwargs):
         """
         Specify position using kwargs.

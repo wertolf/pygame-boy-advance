@@ -6,7 +6,7 @@
 
 from enum import Enum
 from card_prisoner.sidebar import SideBar, SideBarOptions
-from card_prisoner.item_list import ItemList, ItemListMode, InventoryItemIndex, ShopItemIndex, SkillItemIndex
+from card_prisoner.item_list import ItemList, ItemListMode, InventoryItemIndex, ShopItemIndex
 from card_prisoner.textbox import TextBox
 
 from card_prisoner import messages
@@ -22,7 +22,6 @@ class View:
         self.sidebar = SideBar()
         self.item_list = ItemList()
         self.textbox = TextBox()
-        self.textbox.set_text(messages.ABOUT)
 
         # initialization is a little different than setters
         # in order to avoid some bug
@@ -50,10 +49,10 @@ class View:
             case _:
                 raise AssertionError(f"Got unexpected mode: {self._mode}")
 
-    def draw_everything(self, player):
-        self.sidebar.draw_everything(player)
+    def draw_everything(self):
+        self.sidebar.draw_everything()
         self.textbox.draw_everything()
-        self.item_list.draw_everything(player)
+        self.item_list.draw_everything()
 
         # 由于 view 的各组件的 draw_everything 方法在末尾分别更新了各自的局部
         # 因此这里不需要在调用 scrmgr.update_global

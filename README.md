@@ -52,7 +52,7 @@ python -m pdb pygame_boy_advance.py
 
 #### 开发状态
 
-已完成基本框架
+已经具备一款游戏的基本结构，并具有一定的可玩性
 
 #### 游戏简介
 
@@ -88,12 +88,17 @@ HP == 0 或 MP == 0
 
 未完成（策划中）
 
-#### 其他
+## 版本历史
 
-> [!NOTE]
-> 中国跳棋的起源跟中国没有关系，详见
-> * https://en.wikipedia.org/wiki/Chinese_checkers
-> * https://www.tradgames.org.uk/games/Halma.htm
+更多细节详见 [CHANGELOG](./CHANGELOG.md)
+
+* v0.2
+  * 一个实现了基础的“商店”和“天赋”界面的 Card Prisoner 游戏
+  * 在项目文档中增加了 UML 类图
+* v0.1
+  * 一个结构完整、有始有终的 Card Prisoner 游戏
+  * 一个用于启动 Card Prisoner 以及后续作品的主界面
+  * 一个结构基本完整的项目目录结构
 
 ## 许可证
 

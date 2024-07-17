@@ -6,8 +6,7 @@
 * [ ] 实现“库存”“商店”“技能栏”共用同一个屏幕区域并进行切换
 
 主线相关
-* [ ] SideBarOptions 感觉也属于 Enum 的滥用
-* [ ] GameController._update_default_message 在 ItemList 的不同 mode 下的工作逻辑不同
+* [ ] SideBarOptions 感觉也属于 Enum 的滥用，但是也可以接受
 * [ ] 优化抽卡的概率相关逻辑
 * [ ] ItemList.make_items 在设计上有点奇怪
 * [ ] View.draw_everything 需要用到 Player 作为参数，好像有点奇怪
@@ -17,8 +16,19 @@
 * [ ] 使用 B 键开启/关闭背景音乐
 * [ ] (bug fix) 全局淡出即使已经看不到内容了还是要等待一段额外的时间才能看到 game over 的文本
 * [ ] ItemList.draw_everything 里面使用了若干绝对长度，无法适应窗口大小的变换
+* [ ] 优化长按算法
 
-## v0.1.1 (working on it)
+## v0.2.0
+
+最关键的变化
+* Card Prisoner
+  * 绘制 UML 类图
+  * 对项目进行大规模重构，虽然仍然没有达到 100% 覆盖
+  * 实现“商店”界面
+  * 实现“天赋”界面
+  * 实现按住 D 键连续抽卡
+  * 实现 S 键存档 L 键读档
+  * 实现 PrtScn 键截屏
 
 major changes
 * 文档
@@ -37,6 +47,7 @@ major changes
     * 新增 default_border_thickness 属性
     * 新增 default_border_radius 属性
 * Card Prisoner
+  * 简化：取消“技能”设定，只保留“天赋”
   * 重构：重新定义绘制 Item 及其 description 所需要用到的字符串常量的组织结构
   * 重构：将 start_game 分解为 GameController 的若干方法
   * 实现简易的存档 (key_bindings.SAVE_GAME) 和读档 (key_bindings.LOAD_GAME)

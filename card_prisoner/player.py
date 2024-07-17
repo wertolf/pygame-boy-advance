@@ -1,6 +1,6 @@
 from card_prisoner import messages
-from card_prisoner.item import SkillItem
-from card_prisoner.item import InventoryItem, TALENT_DICT
+from card_prisoner.item import TalentItem
+from card_prisoner.item import InventoryItem, TALENT_DICT, MONEY_MAKER, LUCKY_MAN
 from card_prisoner.item import (
     SSR,
     A,
@@ -41,9 +41,8 @@ class Player:
                 i = random.randint(0, len(TALENT_POOL) - 1)
                 talent = TALENT_POOL[i]
             self.talents.append(talent)
-        # level=1 是因为天赋只有 1 级
         self.talents = [
-            SkillItem(talent, level=1)
+            TalentItem(talent, level="max")  # level=max 是因为天赋无法升级
             for talent in self.talents
         ]
 
@@ -127,7 +126,8 @@ class Player:
     def money_earned_per_day(self):
         value = 50
 
-        # TODO: DEFINE & IMPLEMENT A SKILL
+        if MONEY_MAKER in [talent.item_name for talent in self.talents]:
+            value *= 2
 
         return value
 
@@ -138,3 +138,27 @@ class Player:
     @property
     def MP_increase_per_water_card(self):
         return 20
+
+    @property
+    def SSR_probability(self):
+        """
+        抽到 SSR 卡的概率
+        """
+        value = 0.01
+
+        if LUCKY_MAN in [talent.item_name for talent in self.talents]:
+            value *= 2
+        
+        return value
+
+    @property
+    def SUPPLY_probability(self):
+        """
+        抽到补给类卡的概率
+        """
+        value = 0.1
+
+        if LUCKY_MAN in [talent.item_name for talent in self.talents]:
+            value *= 2
+        
+        return value
