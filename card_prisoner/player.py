@@ -21,8 +21,6 @@ class Player:
 
             CardNames.FOOD: InventoryItem(CardNames.FOOD.value, 0),
             CardNames.WATER: InventoryItem(CardNames.WATER.value, 0),
-
-            CardNames.ASPIRIN: InventoryItem(CardNames.ASPIRIN.value, 0),
         }
 
         self.talents = []
@@ -32,7 +30,7 @@ class Player:
                 talent = get_random_talent()
             self.talents.append(talent)
         # level=1 是因为天赋只有 1 级
-        self.talents = [SkillItem(talent.value, level=1) for talent in self.talents]
+        self.talents = [SkillItem(talent, level=1) for talent in self.talents]
 
         self.death_reason = None
     

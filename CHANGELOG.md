@@ -1,7 +1,14 @@
 ## TODO
 
-Card Prisoner
-* [ ] View.update_default_message 方法在设计上感觉很奇怪，寻找别的替代方案
+### Card Prisoner
+
+关键挑战
+* [ ] 实现“库存”“商店”“技能栏”共用同一个屏幕区域并进行切换
+
+其他
+* [ ] GameController._update_default_message 在 ItemList 的不同 mode 下的工作逻辑不同
+* [ ] ItemList.make_items 在设计上有点奇怪
+* [ ] View.draw_everything 需要用到 Player 作为参数，好像有点奇怪
 * [ ] 抽到 SSR 卡时触发额外的动画效果
 * [ ] 使用 B 键开启/关闭背景音乐
 * [ ] (bug fix) 全局淡出即使已经看不到内容了还是要等待一段额外的时间才能看到 game over 的文本
@@ -45,8 +52,16 @@ major changes
     * 取消 sanity 属性
     * 取消 status 属性
     * 取消 token 属性
-  * 修改 ItemList 类
-    * 将 draw_item 函数整合进来作为 method
+  * 重构视图相关 class
+    * 将 draw_item 函数整合进 ItemList 作为 method
+    * 简化：取消“切换侧边栏选项时，同时变换 ItemList 显示内容”的行为
+    * 将 update_default_message 从 View 移入 GameController
+      并在 GameController 的以下方法的末尾进行调用
+      * on_arrow_key_up
+      * on_confirm
+      * on_cancel
+  * 调整游戏机制
+    * 简化：取消药物类卡片
 * 从 mota-js 中导入素材
   并更新 README 的“许可证”一节
 

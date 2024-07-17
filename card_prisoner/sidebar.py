@@ -40,11 +40,25 @@ class SideBar:
 
         self.is_activated = False
 
-    def draw_everything(self, player, selected_index):
+        # 初始状态下，选择最上面的选项
+        self._selected_option_index = len(self.options) - 1
+    
+    @property
+    def selected_option_index(self):
+        return self._selected_option_index
+    
+    @selected_option_index.setter
+    def selected_option_index(self, value):
+        if value < 0 or value > len(self.options) - 1:  # 合法性检查
+            return
+
+        self._selected_option_index = value
+
+    def draw_everything(self, player):
         self.surface.fill(color_theme.background)
         self._draw_border()
         self._draw_upper(player)
-        self._draw_lower(selected_index)
+        self._draw_lower()
 
         scrmgr.screen.blit(self.surface, self.rect)
         scrmgr.update_local_area(self.rect)
@@ -84,11 +98,11 @@ class SideBar:
                 centery=centery,
             )
 
-    def _draw_lower(self, selected_index):
+    def _draw_lower(self):
         centery = self.border_rect.bottom
         for i, option in enumerate(self.options):
             centery -= scrmgr.default_line_distance
-            selected = (i == selected_index)
+            selected = (i == self.selected_option_index)
             if self.is_activated:
                 color = color_theme.foreground
             else:
@@ -98,8 +112,10 @@ class SideBar:
                 if that looks better
                 """
             lega.draw.text_single_line(
-                self.surface, option.value,
-                color=color, selected=selected,
+                self.surface,
+                option.value,
+                color=color,
+                selected=selected,
                 centerx=self.border_rect.centerx,
                 centery=centery,
             )

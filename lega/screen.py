@@ -94,7 +94,7 @@ class ScreenManager:
     
     @property
     def default_border_thickness(self) -> int:
-        return self._win_width // 16 // 20
+        return self._win_width // 16 // 40
     
     @property
     def default_border_radius(self) -> int:  # 圆角矩形相关

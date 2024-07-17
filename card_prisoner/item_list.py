@@ -21,16 +21,13 @@ class ItemListMode(Enum):
 
 class InventoryItemIndex(IntEnum):
     SSR = 0
-    SR = 1
-    R = 2
+
     A = 3
     B = 4
     C = 5
+
     FOOD = 7
     WATER = 8
-    ASPIRIN = 10
-    VITAMIN = 11
-    TRANQUILIER = 12
 
 class ShopItemIndex(IntEnum):
     DRAW_1_CARD = 14
@@ -65,9 +62,24 @@ class ItemList:
         self.n_rows = 3
         self.n_cols = 7
 
-        self.is_activated = False
 
         self.mode = ItemListMode.EMPTY
+
+        self.is_activated = False
+        # 初始状态下，看不到被选中的 item
+        # 每次进入 ItemList 的时候，将 index 置为 0
+        self._selected_item_index = -1
+
+    @property
+    def selected_item_index(self):
+        return self._selected_item_index
+    
+    @selected_item_index.setter
+    def selected_item_index(self, value):
+        if value < 0 or value > self.n_cols * self.n_rows - 1:  # 合法性检查
+            return
+
+        self._selected_item_index = value
 
     @property
     def color(self):
@@ -89,7 +101,6 @@ class ItemList:
                 self.items[InventoryItemIndex.C] = player.inventory[CardNames.C]
                 self.items[InventoryItemIndex.FOOD] = player.inventory[CardNames.FOOD]
                 self.items[InventoryItemIndex.WATER] = player.inventory[CardNames.WATER]
-                self.items[InventoryItemIndex.ASPIRIN] = player.inventory[CardNames.ASPIRIN]
             case ItemListMode.SHOP:
                 ...
             case ItemListMode.SKILLS:
@@ -105,7 +116,7 @@ class ItemList:
             scrmgr.default_border_radius,
         )
 
-    def draw_everything(self, player, selected_index):
+    def draw_everything(self, player):
 
         self.surface.fill(color_theme.background)
 
@@ -159,13 +170,13 @@ class ItemList:
         # selecting effect
 
         if self.is_activated:
-            i = int(selected_index / self.n_cols)
-            j = int(selected_index % self.n_cols)
+            i = int(self.selected_item_index / self.n_cols)
+            j = int(self.selected_item_index % self.n_cols)
 
             centerx = centerx_base + distance_x * j
             centery = centery_base + distance_y * i
 
-            item = self.items[selected_index]
+            item = self.items[self.selected_item_index]
             self._draw_item(self.surface, item, selected=True, centerx=centerx, centery=centery)
         
         scrmgr.screen.blit(self.surface, self.rect)
