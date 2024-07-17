@@ -16,7 +16,7 @@
 * [ ] 抽到 SSR 卡时触发额外的动画效果
 * [ ] 使用 B 键开启/关闭背景音乐
 * [ ] (bug fix) 全局淡出即使已经看不到内容了还是要等待一段额外的时间才能看到 game over 的文本
-* [ ] ScreenManager 的 UML 类图
+* [ ] ItemList.draw_everything 里面使用了若干绝对长度，无法适应窗口大小的变换
 
 ## v0.1.1 (working on it)
 
@@ -91,6 +91,7 @@ minor changes
 * 补上 requirements.txt
 * 新建 examples 目录
   * 一个空的 story_mode.py 文件：计划用于展示使用 lega 制作剧情类游戏的潜力
+* 实现了一个简易的 toggle_resolution
 
 ### 为什么将 display.update 与 clock.tick 相分离
 

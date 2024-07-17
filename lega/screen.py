@@ -58,7 +58,16 @@ class ScreenManager:
         self.screen.blit(content_backup, self.screen.get_rect())
         self.update_global()
     
-    def toggle_resolution(self, res) -> None:
+    def toggle_resolution(self, res: tuple[int, int]) -> None:
+        assert not self.is_full_screen, "暂不支持全屏模式上切换分辨率"
+
+        self._win_width, self._win_height = res
+
+        self.screen = pygame.display.set_mode(self.resolution)
+
+        # 暂不解决切换分辨率之后需要重绘画面的问题
+        # 假设只在进入某个游戏的时候会切换分辨率
+        # 比如从 Card Prisoner 退出之后进入 Magic Tower
         ...
 
     @property
@@ -79,7 +88,13 @@ class ScreenManager:
     
     @property
     def font_size_normal(self) -> int:
-        size = self._win_width // 16 // 4  # 20 for 1280x720
+        """
+        * 20 for 1280x720
+        * 20 for 800x600
+        """
+        size = self._win_height // 9 // 4
+        if size < 20:
+            size = 20
         return size
     
     @property
@@ -89,7 +104,13 @@ class ScreenManager:
     
     @property
     def default_line_distance(self) -> int:
-        line_distance = self._win_width // 16 // 2
+        """
+        * 40 for 1280x720
+        * 40 for 800x600
+        """
+        line_distance = self._win_height // 9 // 2
+        if line_distance < 40:
+            line_distance = 40
         return line_distance
     
     @property

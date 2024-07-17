@@ -1,3 +1,10 @@
+
+# 窗口相关
+WIN_WIDTH = 1280
+WIN_HEIGHT = 720
+WINDOW_CAPTION = "Card Prisoner"
+
+# 其他
 PRICE_PER_CARD = 10
 
 KEYDOWN_INITIAL_INTERVAL = 1  # seconds

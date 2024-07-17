@@ -41,15 +41,14 @@ def draw_option_list(options, selected_index):
     """
     绘制选项列表
     """
-    line_distance = scrmgr.win_width // 16 // 2
-    centery = calculate_centery(len(options), scrmgr.center.y, line_distance)
+    centery = calculate_centery(len(options), scrmgr.center.y, scrmgr.default_line_distance)
     for i, opt in enumerate(options):
         lega.draw.text_single_line(
             scrmgr.screen, opt,
             selected=(i == selected_index),
             centerx=scrmgr.center.x, centery=centery,
         )
-        centery += line_distance
+        centery += scrmgr.default_line_distance
 
 def draw_everything(options, selected_index):
     scrmgr.clear_screen_without_update()

@@ -1,6 +1,10 @@
 import lega.draw
 from card_prisoner import messages
-from card_prisoner.constants import DRAW_CARD_TIME_INTERVAL, KEYDOWN_INITIAL_INTERVAL, PRICE_PER_CARD
+from card_prisoner.constants import DRAW_CARD_TIME_INTERVAL, KEYDOWN_INITIAL_INTERVAL, PRICE_PER_CARD, WINDOW_CAPTION
+from card_prisoner.constants import (
+    WIN_WIDTH,
+    WIN_HEIGHT,
+)
 from card_prisoner.item_list import InventoryItemIndex, ItemListMode, ShopItemIndex
 from card_prisoner.player import Player
 from card_prisoner.sidebar import SideBarOptions
@@ -31,8 +35,6 @@ import pickle
 import random
 import time
 
-WINDOW_CAPTION = "Card Prisoner"
-
 class GameController:
     def initialize_game(self):
         """
@@ -42,6 +44,7 @@ class GameController:
         # if __name__ == "__main__" the following steps are redundant
         # but if called from another script they may be necessary
         pygame.init()
+        scrmgr.toggle_resolution((WIN_WIDTH, WIN_HEIGHT))
         scrmgr.clear_screen_without_update()
         scrmgr.update_global()
 

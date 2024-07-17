@@ -1,7 +1,7 @@
 import pygame.draw
 import pygame.font
 
-from config import color_theme
+from config import color_theme, font_theme
 from lega.calc import calculate_centery
 from lega.screen import scrmgr
 
@@ -28,7 +28,7 @@ def text_single_line(target_surface, text, selected=False, **kwargs):
     font_size = kwargs.pop("font_size", default_font_size)
     color = kwargs.pop("color", color_theme.foreground)
 
-    font_object = pygame.font.SysFont("Courier New", font_size, bold)
+    font_object = pygame.font.SysFont(font_theme.default, font_size, bold)
     text_surface = font_object.render(text, antialias, color)
     text_rect = text_surface.get_rect(**kwargs)
 
