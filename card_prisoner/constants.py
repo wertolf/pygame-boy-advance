@@ -7,8 +7,8 @@ WINDOW_CAPTION = "Card Prisoner"
 # 其他
 PRICE_PER_CARD = 10
 
-KEYDOWN_INITIAL_INTERVAL = 1  # seconds
-DRAW_CARD_TIME_INTERVAL = 0.1  # seconds
+KEYDOWN_INITIAL_DELAY = 1000  # 按下某键之后多长时间 (ms) 触发长按 (holding) 效果
+KEYDOWN_REPEAT_DELAY = 100  # 长按状态下，每隔多长时间 (ms) 生成一个新的 KEYDOWN 事件
 
 # 在普通卡内部的概率分配
 A_PROBABILITY = 0.2

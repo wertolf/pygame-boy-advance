@@ -1,6 +1,6 @@
 import lega.draw
 from card_prisoner import messages
-from card_prisoner.constants import DRAW_CARD_TIME_INTERVAL, KEYDOWN_INITIAL_INTERVAL, PRICE_PER_CARD, WINDOW_CAPTION
+from card_prisoner.constants import KEYDOWN_REPEAT_DELAY, KEYDOWN_INITIAL_DELAY, PRICE_PER_CARD, WINDOW_CAPTION
 from card_prisoner.constants import (
     WIN_WIDTH,
     WIN_HEIGHT,
@@ -55,6 +55,15 @@ class GameController:
 
         pygame.display.set_caption(WINDOW_CAPTION)
 
+        # speed up event queue processing by only allowing relevant events on the queue
+        # NOTE: in particular, mouse events are blocked in this game
+        pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
+
+        # enable keyboard repeat
+        # that is, held down keys will generate multiple KEYDOWN events
+        # https://www.pygame.org/docs/ref/key.html#pygame.key.set_repeat
+        pygame.key.set_repeat(KEYDOWN_INITIAL_DELAY, KEYDOWN_REPEAT_DELAY)
+
         # initialize model
 
         self._player = Player()
@@ -71,63 +80,17 @@ class GameController:
         # following are main loop variables
 
         self.game_running = True
-        self.pressed_key = None
-        self.is_holding_key = False
-        self.key_holding_timer = 0
-        self.draw_card_timer = 0
 
     def start_game(self):
 
         while self.game_running:
 
-            # timer-related logic
-
-            if self.pressed_key is not None:
-                # 若某个键处于被按下的状态
-
-                if not self.is_holding_key:
-                    # 若它还没有进入长按状态，则判断是否可以进入长按状态
-                    time_elapsed = time.time() - self.key_holding_timer
-                    if time_elapsed > KEYDOWN_INITIAL_INTERVAL:
-                        self.is_holding_key = True
-                else:
-                    # 若已经进入长按状态，则重复执行该键对应的行为
-                    match self.pressed_key:
-                        case key_bindings.DRAW_CARD:
-                            time_elapsed = time.time() - self.draw_card_timer
-                            if time_elapsed > DRAW_CARD_TIME_INTERVAL:
-                                # TODO: duplicate code in KEYDOWN handler
-                                self._draw_card()
-
-                                self.draw_card_timer = time.time()
-                        case _:
-                            logging.critical(f"Got unsupported key holding: {self.pressed_key}")
-
-            # event handling
-
             for e in pygame.event.get():
+
                 if e.type == QUIT:
                     terminate()
+
                 elif e.type == KEYDOWN:
-
-                    # 用于识别长按
-                    self.key_holding_timer = time.time()
-
-                    key = getattr(e, "key")
-                    match key:
-                        case key_bindings.DRAW_CARD:
-                            # 按下 D 键时立刻进行一次抽卡
-                            # 如果持续按住 KEYDOWN_INITIAL_TIME_INTERVAL
-                            # 则之后每隔 DRAW_CARD_TIME_INTERVAL 抽一次卡
-                            self._draw_card()
-
-                            self.pressed_key = key_bindings.DRAW_CARD
-                            self.draw_card_timer = time.time()
-                elif e.type == KEYUP:
-
-                    # 重置用于识别长按的相关数据结构
-                    self.is_holding_key = False
-                    self.pressed_key = None
 
                     key = getattr(e, "key")
 
@@ -142,7 +105,7 @@ class GameController:
                         self._cheat()
 
                     elif key == key_bindings.DRAW_CARD:
-                        pass
+                        self._draw_card()
                 
                     elif key in key_bindings.ARROW_KEYS:
                         self._on_arrow_key_up(key)
@@ -161,8 +124,11 @@ class GameController:
 
                     elif key == key_bindings.DISPLAY_HELP:
                         display_help(messages.HELP)
+
                     else:
-                        logging.critical(f"Ignored KEYUP: {key}")
+                        logging.critical(f"Ignored KEYDOWN: {key}")
+                
+                # end of event handling
 
             # 由于大多数事件都会修改 view 的某个局部
             # 所以出于简化的考虑，在循环末尾用一行代码可以省去在每一处都添加一行相同的代码
@@ -171,6 +137,8 @@ class GameController:
             self._view.draw_everything()
 
             scrmgr.tick()
+
+            # end of main loop
 
         assert self._player.is_game_over()
 
