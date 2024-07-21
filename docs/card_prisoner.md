@@ -43,6 +43,30 @@ border_rect 是该组件的边框及边框内的内容**相对于 rect** 所占�
 
 ## Ideas
 
+### 2024-07-19 16:45
+
+在阅读 pygame 的文档时意外发现 pygame.key.set_repeat 已经实现了我想要的功能
+
+于是放弃了前面的想法
+
+### 2024-07-19 12:30
+
+将所有 KEYUP 处理逻辑改为 KEYDOWN
+
+```
+在 holding == False 时
+    KEYDOWN 后经过 INITIAL_HOLDING_TIME_INTERVAL 将 holding 置为 True
+在 holding == True 时
+    每隔 REPEAT_TIME_INTERVAL **生成一个新的 KEYDOWN 事件**
+KEYUP 时
+    将 holding 置为 False
+```
+
+在 CHANGELOG 中加上
+```
+(optimization) a unified solution for holding (long pressing)
+```
+
 ### 2024-07-17 13:00
 
 我们本质上只是需要一个 scalable 的方式来为不同的 Item (Card, Skill, ...)
