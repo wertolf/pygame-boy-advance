@@ -1,4 +1,4 @@
-# PBL Mini Project: 绘制五线谱和简单音符
+# Mini PBL Project: 绘制五线谱和简单音符
 
 ## 任务描述
 
